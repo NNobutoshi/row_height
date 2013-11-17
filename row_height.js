@@ -47,7 +47,7 @@
 				,arry      = this.getRow($elements,settings)
 				,$slice    = arry[0]
 				,$surplus  = arry[1]
-				,len       = $slice.length;
+				,len       = $slice.length
 				;
 
 				$slice
