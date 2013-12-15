@@ -4,12 +4,14 @@
 	;
 	$.fn[pluginName] = function(options) {
 		var
-		 options   = options || {}
+		 options = options || {}
 		;
 		if(!$[pluginName]){
 			$[pluginName] = _extend();
 		}
-		this.data(pluginName,_inherit($[pluginName]).init(this,options));
+		if(!this.data(pluginName)){
+			this.data(pluginName,_inherit($[pluginName]).init(this,options));
+		}
 		return this;
 	};
 	function _extend(){
@@ -47,7 +49,7 @@
 				,arry      = this.getRow($elements,settings)
 				,$slice    = arry[0]
 				,$surplus  = arry[1]
-				,len       = $slice.length;
+				,len       = $slice.length
 				;
 
 				$slice
