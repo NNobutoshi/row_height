@@ -83,7 +83,6 @@
 					var
 					 $this         = $(this)
 					,thisOffsetTop = $this.offset().top
-					,data          = $this.data('defHeight')
 					;
 					if(firstOffsetTop === false){
 						firstOffsetTop = thisOffsetTop;
