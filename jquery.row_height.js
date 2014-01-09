@@ -5,16 +5,17 @@
 	$.fn[pluginName] = function(options) {
 		var
 		 options = options || {}
+		,master  = $[pluginName]
 		;
-		if(!$[pluginName]){
-			$[pluginName] = _extend();
+		if(!master){
+			master = $[pluginName] = _createMaster();
 		}
-		if(!this.data(pluginName)){
-			this.data(pluginName,_inherit($[pluginName]).init(this,options));
+		if(this.length && !this.data(pluginName)){
+			this.data(pluginName,_inherit(master).init(this,options));
 		}
 		return this;
 	};
-	function _extend(){
+	function _createMaster(){
 		return {
 			 timeoutId : 0
 			,settings  : {
@@ -23,10 +24,12 @@
 				,onComplete     : false
 				,cssProp        : 'height'
 			}
+			,$elements : null
 			,init : function($elements,options){
 				var
 				 that = this
 				;
+				this.$elements = $elements;
 				this.settings = $.extend({},this.settings,options);
 				this.handler = function(){
 					clearTimeout(that.timeoutId);
@@ -46,7 +49,7 @@
 				,that      = this
 				,heights   = []
 				,$elements = (elements instanceof jQuery)?elements:$(elements)
-				,arry      = this.getRow($elements,settings)
+				,arry      = this.getRow($elements,settings.firstClassName)
 				,$slice    = arry[0]
 				,$surplus  = arry[1]
 				,len       = $slice.length
@@ -70,13 +73,13 @@
 					}
 				},1);
 			}
-			,getRow : function($elements,settings){
+			,getRow : function($elements,firstClassName){
 				var
 				 firstOffsetTop = false
 				,slicePoint     = 0
 				;
-				if(settings.firstClassName){
-					$elements.removeClass(settings.firstClassName);
+				if(firstClassName){
+					$elements.removeClass(firstClassName);
 				}
 				$elements
 				 .each(function(i){
@@ -86,8 +89,8 @@
 					;
 					if(firstOffsetTop === false){
 						firstOffsetTop = thisOffsetTop;
-						if(settings.firstClassName){
-							$this.addClass(settings.firstClassName);
+						if(firstClassName){
+							$this.addClass(firstClassName);
 						}
 					}else if(firstOffsetTop !== thisOffsetTop){
 						return false;
@@ -98,8 +101,16 @@
 				return [$elements.slice(0,slicePoint+1),$elements.slice(slicePoint+1)];
 			}
 			,destroy : function(){
-				clearTimeout(this.timeoutId);
-				$(window).unbind('blockresize',this.handler);
+				if(typeof this.handler === 'function' && this.$elements){
+					clearTimeout(this.timeoutId);
+					$(window).unbind('blockresize',this.handler);
+					this
+					 .$elements
+					 .data(pluginName,null)
+					 .css(this.settings.cssProp,'')
+					 .removeClass(this.settings.firstClassName)
+					;
+				}
 			}
 		};
 	};

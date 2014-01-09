@@ -37,8 +37,12 @@
 	#test li div {
 		background: #ff9;
 	}
-	#list2 {
+	.btnGroup {
 		clear: both;
+		padding-top: 1em;
+	}
+	.btnGroup a {
+		margin-left: 1em;
 	}
   </style>
 
@@ -60,6 +64,7 @@
 		<li>10<br>あ<br>あ<br>あ<br>あ<br>あ<br></li>
 		<li>11<br>あ<br>あ<br>あ<br>あ<br>あ<br></li>
 		</ul>
+		<p class="btnGroup"><a href="#container" class="button" id="list1_i">init</a><a href="#container" class="button" id="list1_d">destroy</a></p>
 		<ul id="list2">
 		<li>0<div>い<br>い<br>い<br>い<br></div><br>あ<br>あ<br>あ<br>あ<br>あ<br></li>
 		<li>1<div>い<br>い<br>い<br></div><br>あ<br>あ<br>あ<br></li>
@@ -71,26 +76,26 @@
 <script type="text/javascript">
 (function($){
 	$('#list1>li').rowHeight();
-	var $rowHeight = $('#list2>li').rowHeight({
+	var rowHeight = $('#list2>li').rowHeight({
 		onComplete : function(){
-			$rowHeight.data('rowHeight').run('#list2>li>div',{
+			rowHeight.run('#list2>li>div',{
 				onComplete: function(){
-					$rowHeight.data('rowHeight').run('#list2>li',{
+					rowHeight.run('#list2>li',{
 						onComplete: false
 					});
 				}
 			});
 		}
-	});
-/*
-	$('#list1').click(function(){
-		$('#list1>li').data('rowHeight').destroy();
-		$('#list1>li').data('rowHeight',false);
-	});
-	$('#list2').click(function(){
+		,firstClassName : 'hoge'
+	}).data('rowHeight');
+	$('#list1_i').click(function(){
 		$('#list1>li').rowHeight();
 	});
-*/
+	$('#list1_d').click(function(){
+		if($('#list1>li').data('rowHeight')){
+			$('#list1>li').data('rowHeight').destroy();
+		}
+	});
 })(jQuery);
 </script>
 </body>
