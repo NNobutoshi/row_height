@@ -1,4 +1,4 @@
-;(function($){
+;(function($,window){
 	var
 	 pluginName = 'rowHeight'
 	;
@@ -23,6 +23,8 @@
 				,delay          : 200
 				,onComplete     : false
 				,cssProp        : 'height'
+				,autoBind       : ''
+				,bindObj        : window
 			}
 			,$elements : null
 			,init : function($elements,options){
@@ -37,10 +39,12 @@
 						that.run($elements);
 					},that.settings.delay);
 				};
-				$(window)
-				 .bind('blockresize',that.handler)
-				 .trigger('blockresize',that.handler)
-				;
+				if(this.settings.autoBind){
+					$(this.settings.bindObj)
+					 .bind(this.settings.autoBind,that.handler)
+					;
+				}
+				this.handler();
 				return this;
 			}
 			,run : function (elements,options){
@@ -103,7 +107,9 @@
 			,destroy : function(){
 				if(typeof this.handler === 'function' && this.$elements){
 					clearTimeout(this.timeoutId);
-					$(window).unbind('blockresize',this.handler);
+					if(this.settings.autoBind){
+						$(this.settings.bindObj).unbind(this.settings.autoBind,this.handler);
+					}
 					this
 					 .$elements
 					 .data(pluginName,null)
@@ -122,70 +128,4 @@
 		F.prototype = o;
 		return new F();
 	};
-})(jQuery);
-
-
-//=== blockresize-event ===
-// via @ jney / jquery-textresize-event
-// https://github.com/jney/jquery-textresize-event
-//
-
-;(function ($,window) {
-  
-var
-	 interval = 200
-	,FALSE = !1
-	,CHILD = 'br-child'
-	,WIDTH = 'br-width'
-	,HEIGHT = 'br-height'
-	,TIMER = 'br-timer'
-;
-var detect = function (element, child) {
-	element.data(WIDTH, child.width());
-	element.data(HEIGHT, child.height());
-	return function () {
-		if (element.data(WIDTH) !== child.width() || element.data(HEIGHT) !== child.height()) {
-			element.data(WIDTH, child.width())
-			 .data(HEIGHT, child.height())
-			 .triggerHandler('blockresize')
-			;
-		}
-	};
-};
-
-$.event.special.blockresize = {
-	setup: function () {
-		var
-		 element = $(this)
-		,child   = $('<span>&nbsp</span>')
-		            .css({display:'block',top:'-9999px',position:'absolute',width:'100%'})
-		            .appendTo(this == window ? 'body' : element)
-		,timer   = window.setInterval(detect(element, child), interval)
-		;
-		element
-		 .data(CHILD, child)
-		 .data(TIMER, timer)
-		;
-		return FALSE;
-	},
-	teardown: function () {
-		var element = $(this);
-		window.clearInterval(element.data(TIMER));
-		element.data(CHILD).remove();
-		element
-		 .removeData(CHILD)
-		 .removeData(WIDTH)
-		 .removeData(HEIGHT)
-		 .removeData(TIMER)
-		;
-		return FALSE;
-	}
-};
-
-$.fn.blockresize = function (fn) { 
-	$(this).bind('blockresize', fn);
-	return this;
-};
-
 })(jQuery,window);
-

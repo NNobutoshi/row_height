@@ -11,6 +11,8 @@
 <!-- StyleSheet -->
 <!-- JavaScript -->
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="https://raw.githubusercontent.com/jney/jquery-textresize-event/master/jquery-textresize-event.js"></script>
+  <script src="jquery-blockresize-event.js"></script>
   <script src="../jquery.row_height.js"></script>
   <style type="text/css">
  	body,html {
@@ -70,14 +72,19 @@
 		<li>1<div>い<br>い<br>い<br></div><br>あ<br>あ<br>あ<br></li>
 		<li>2<div>い<br>い<br></div><br>あ<br>あ<br>あ<br>あ<br>あ<br>あ<br>あ<br></li>
 		<li>3<div>い<br></div><br>あ<br>あ<br>あ<br>あ<br>あ<br>あ<br>あ<br></li>
+		<li>4<div>い<br>い<br>い<br>い<br></div><br>あ<br>あ<br>あ<br>あ<br>あ<br></li>
+		<li>5<div>い<br>い<br>い<br></div><br>あ<br>あ<br>あ<br></li>
+		<li>6<div>い<br>い<br></div><br>あ<br>あ<br>あ<br>あ<br>あ<br>あ<br>あ<br></li>
+		<li>7<div>い<br></div><br>あ<br>あ<br>あ<br>あ<br>あ<br>あ<br>あ<br></li>
 		</ul>
 	</div>
 </div>
 <script type="text/javascript">
 (function($){
-	$('#list1>li').rowHeight();
+	$('#list1>li').rowHeight({autoBind:'blockresize textresize'});
 	var rowHeight = $('#list2>li').rowHeight({
-		onComplete : function(){
+		 autoBind:'blockresize textresize'
+		,onComplete : function(){
 			rowHeight.run('#list2>li>div',{
 				onComplete: function(){
 					rowHeight.run('#list2>li',{
@@ -89,7 +96,7 @@
 		,firstClassName : 'hoge'
 	}).data('rowHeight');
 	$('#list1_i').click(function(){
-		$('#list1>li').rowHeight();
+		$('#list1>li').rowHeight({autoBind:'blockresize textresize'});
 	});
 	$('#list1_d').click(function(){
 		if($('#list1>li').data('rowHeight')){
