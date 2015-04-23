@@ -1,52 +1,45 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<!-- meta -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<!-- title -->
-  <title>sample</title>
-<!-- link -->
- 
-<!-- StyleSheet -->
-<!-- JavaScript -->
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <script src="https://raw.githubusercontent.com/jney/jquery-textresize-event/master/jquery-textresize-event.js"></script>
-  <script src="jquery-blockresize-event.js"></script>
-  <script src="../jquery.row_height.js"></script>
-  <style type="text/css">
- 	body,html {
- 		margin:0;
- 		padding:0;
- 	}
- 	#container {
- 		zoom: 1;
-		overflow:hidden;
- 	}
-	#test ul {
-		margin:0 -20px 0 0;
-		padding:0;
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>sample</title>
+<style type="text/css">
+body,html {
+	margin:0;
+	padding:0;
+}
+#container {
+	zoom: 1;
+	overflow:hidden;
 	}
-	#test li {
-		border: solid 1px #f00;
-		width: 60px;
-		padding: 10px 10px;
-		list-style: none;
-		float: left;
-		margin-top: 20px;
-		margin-right: 20px;
-	}
-	#test li div {
-		background: #ff9;
-	}
-	.btnGroup {
-		clear: both;
-		padding-top: 1em;
-	}
-	.btnGroup a {
-		margin-left: 1em;
-	}
-  </style>
+#test ul {
+	margin:0 -20px 0 0;
+	padding:0;
+}
+#test li {
+	border: solid 1px #f00;
+	width: 60px;
+	padding: 10px 10px;
+	list-style: none;
+	float: left;
+	margin-top: 20px;
+	margin-right: 20px;
+}
+#test li div {
+	background: #ff9;
+}
+#list1 li {
+	box-sizing: border-box;
+}
+.btnGroup {
+	clear: both;
+	padding-top: 1em;
+}
+.btnGroup a {
+	margin-left: 1em;
+}
+</style>
 
 </head>
 <body class="base">
@@ -79,31 +72,46 @@
 		</ul>
 	</div>
 </div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://raw.githubusercontent.com/jney/jquery-textresize-event/master/jquery-textresize-event.js"></script>
+<script src="jquery-blockresize-event.js"></script>
+<script src="../jquery.row_height.js"></script>
 <script type="text/javascript">
 (function($){
-	$('#list1>li').rowHeight({autoBind:'blockresize textresize'});
-	var rowHeight = $('#list2>li').rowHeight({
-		 autoBind:'blockresize textresize'
-		,onComplete : function(){
-			rowHeight.run('#list2>li>div',{
-				onComplete: function(){
-					rowHeight.run('#list2>li',{
-						onComplete: false
-					});
+	var
+	 $list1 = $('#list1>li').rowHeight({
+		 bindType   :'blockresize textresize'
+	 })
+	,$list2 = $('#list2>li').rowHeight({
+		 bindType       :'blockresize textresize'
+		,firstClassName : 'js-first'
+		,lastClassName  : 'js-last'
+		,onComplete     : function(){
+			$.rowHeight.run($list2.children('div'),{
+				onComplete : function(){
+					$.rowHeight.run($list2);
 				}
 			});
 		}
-		,firstClassName : 'hoge'
-	}).data('rowHeight');
+	})
+	;
+
 	$('#list1_i').click(function(){
-		$('#list1>li').rowHeight({autoBind:'blockresize textresize'});
+		$list1.rowHeight({
+			bindType:'blockresize textresize'
+		});
+		return false;
 	});
+
 	$('#list1_d').click(function(){
-		if($('#list1>li').data('rowHeight')){
-			$('#list1>li').data('rowHeight').destroy();
+		if($list1.data('rowHeight')){
+			$list1.data('rowHeight').destroy();
 		}
+		return false;
 	});
-})(jQuery);
+
+})(jQuery,false);
+
 </script>
 </body>
 </html>
