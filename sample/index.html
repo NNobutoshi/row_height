@@ -73,17 +73,16 @@ body,html {
 	</div>
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script src="https://raw.githubusercontent.com/jney/jquery-textresize-event/master/jquery-textresize-event.js"></script>
-<script src="jquery-blockresize-event.js"></script>
+<script src="https://raw.githubusercontent.com/NNobutoshi/resize_events/master/jquery.resize_events.js"></script>
 <script src="../jquery.row_height.js"></script>
 <script type="text/javascript">
 (function($){
 	var
 	 $list1 = $('#list1>li').rowHeight({
-		 bindType   :'blockresize textresize'
+		bindType :'elementresize fontresize'
 	 })
 	,$list2 = $('#list2>li').rowHeight({
-		 bindType       :'blockresize textresize'
+		 bindType       :'elementresize fontresize'
 		,firstClassName : 'js-first'
 		,lastClassName  : 'js-last'
 		,onComplete     : function(){
@@ -98,7 +97,7 @@ body,html {
 
 	$('#list1_i').click(function(){
 		$list1.rowHeight({
-			bindType:'blockresize textresize'
+			bindType:'elementresize fontresize'
 		});
 		return false;
 	});
@@ -110,7 +109,7 @@ body,html {
 		return false;
 	});
 
-})(jQuery,false);
+})(jQuery);
 
 </script>
 </body>

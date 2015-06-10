@@ -1,5 +1,6 @@
 /*!
-* License: MIT
+* License : MIT
+* link    : https://github.com/NNobutoshi/row_height/
 */
 ;(function($,window,undefined){
 	var
@@ -32,7 +33,7 @@
 				,bindType       : ''
 				,bindObj        : window
 				,forEachRow     : true
-			 }
+			}
 			,init : function($elements,options){
 				var
 				 that     = this
@@ -53,14 +54,14 @@
 					;
 				}
 				return this;
-			 }
+			}
 			,run : function (elements,options,flag){
 				var
 				 that      = this
 				,settings  = $.extend({},this.settings,options)
 				,heights   = []
 				,$elements = (elements instanceof jQuery)?elements:$(elements)
-				,rows      = this.getRow($elements,settings.firstClassName)
+				,rows      = this.getRow($elements)
 				,$slice
 				,$ends
 				;
@@ -138,7 +139,7 @@
 					,$elements.slice(slicePoint+1)
 				]
 				;
-			 }
+			}
 			,destroy : function(){
 				clearTimeout(this.timeoutId);
 				if(this.settings.bindType){
