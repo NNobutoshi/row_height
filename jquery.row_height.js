@@ -1,6 +1,6 @@
 /*!
 * jQuery.row_height
-* version : 2.0.0
+* version : 2.0.1
 * link    : https://github.com/NNobutoshi/row_height/
 * License : MIT
 */
@@ -10,13 +10,17 @@
   var
    pluginName = 'rowHeight'
   ;
-  $.fn[pluginName] = function(target,options) {
+  $.fn[pluginName] = function(target,options){
     if(this.length && !this.data(pluginName)){
-      this.data(pluginName,_inherit($[pluginName]).init(this,target,options));
+      this.data(
+         pluginName
+        ,_inherit($[pluginName])
+          .init(this,target,options)
+      );
     }
     return this;
   };
-  $[pluginName] =  {
+  $[pluginName] = {
      $elements : null
     ,timeoutId : 0
     ,handler   : undefined
@@ -36,7 +40,7 @@
        that = this
       ,settings
       ;
-      if(typeof target === 'object') {
+      if(typeof target === 'object'){
         options = target;
       }
       settings = this.settings = $.extend({},this.settings,options);
@@ -50,12 +54,12 @@
           },settings.delay);
         };
         $(settings.bindObj)
-         .on(settings.bindType,this.handler)
+          .on(settings.bindType,this.handler)
         ;
       }
       return this;
     }
-    ,run : function (elements,target,options,flag){
+    ,run : function(elements,target,options,flag){
       var
        that      = this
       ,settings
@@ -91,44 +95,46 @@
         $targets = $elements;
       }
       $targets
-       .css(settings.cssProp,'')
-       .each(function(i){
-        var
-         $this   = $(this)
-        ,boxType = $this.css('boxSizing')
-        ;
-        if(boxType === 'border-box') {
-          heights[heights.length] = $this.outerHeight();
-        }else{
-          heights[heights.length] = $this.height();
-        }
-        if(settings.firstClassName){
-          if(i === 0) {
-            $this.addClass(settings.firstClassName);
+        .css(settings.cssProp,'')
+        .each(function(i){
+          var
+           $this   = $(this)
+          ,boxType = $this.css('boxSizing')
+          ;
+          if(boxType === 'border-box') {
+            heights[heights.length] = $this.outerHeight();
           }else{
-            $this.removeClass(settings.firstClassName);
+            heights[heights.length] = $this.height();
           }
-        }
-        if(settings.lastClassName){
-          if(i === $targets.length-1){
-            $this.addClass(settings.lastClassName);
-          }else {
-            $this.removeClass(settings.lastClassName);
+          if(settings.firstClassName){
+            if(i === 0) {
+              $this.addClass(settings.firstClassName);
+            }else{
+              $this.removeClass(settings.firstClassName);
+            }
           }
-        }
-       })
-       .css(settings.cssProp,Math.max.apply(null,heights) + 'px')
+          if(settings.lastClassName){
+            if(i === $targets.length-1){
+              $this.addClass(settings.lastClassName);
+            }else {
+              $this.removeClass(settings.lastClassName);
+            }
+          }
+        })
+        .css(settings.cssProp,Math.max.apply(null,heights) + 'px')
       ;
-      setTimeout(function(){
-        if($ends && $ends.length){
-          that.run($ends,undefined,settings,1);
-        }else{
-          if($.isFunction(settings.onComplete)){
-            settings.onComplete();
+      setTimeout(
+        function(){
+          if($ends && $ends.length){
+            that.run($ends,undefined,settings,1);
+          }else{
+            if($.isFunction(settings.onComplete)){
+              settings.onComplete();
+            }
           }
         }
-      },1)
-      ;
+        ,1
+      );
       return this;
     }
     ,getRow : function($targets){
@@ -138,28 +144,28 @@
       ,$ends
       ;
       $targets
-       .each(function(i){
-        var
-         $this         = $(this)
-        ,thisOffsetTop = $this.offset().top
-        ;
-        if(i === 0){
-          firstOffsetTop = thisOffsetTop;
-        }
-        if(firstOffsetTop === thisOffsetTop){
-          if(!$firstRowGroup){
-            $firstRowGroup = $this;
-          }else{
-            $.merge($firstRowGroup,$this);
+        .each(function(i){
+          var
+           $this         = $(this)
+          ,thisOffsetTop = $this.offset().top
+          ;
+          if(i === 0){
+            firstOffsetTop = thisOffsetTop;
           }
-        }else{
-          if(!$ends) {
-            $ends = $this;
+          if(firstOffsetTop === thisOffsetTop){
+            if(!$firstRowGroup){
+              $firstRowGroup = $this;
+            }else{
+              $.merge($firstRowGroup,$this);
+            }
           }else{
-            $.merge($ends,$this);
+            if(!$ends) {
+              $ends = $this;
+            }else{
+              $.merge($ends,$this);
+            }
           }
-        }
-       })
+        })
       ;
       return [$firstRowGroup,$ends];
     }
@@ -169,15 +175,15 @@
         $(this.settings.bindObj).off(this.settings.bindType,this.handler);
       }
       return this
-       .$elements
-       .removeData(pluginName)
-       .css(this.settings.cssProp,'')
-       .removeClass(this.settings.firstClassName)
-       .removeClass(this.settings.lastClassName)
+        .$elements
+        .removeData(pluginName)
+        .css(this.settings.cssProp,'')
+        .removeClass(this.settings.firstClassName)
+        .removeClass(this.settings.lastClassName)
       ;
     }
   };
-  function _inherit(o) {
+  function _inherit(o){
     if(Object.create){
       return Object.create(o);
     }
