@@ -16,7 +16,7 @@ var
         ,src + '/jquery.row_height.js'
         ,src + '/init.js'
       ]
-      ,watch   : false
+      ,watch   : true
       ,default : false
       // ,needsUglify: false
       // ,needsSourcemap: false

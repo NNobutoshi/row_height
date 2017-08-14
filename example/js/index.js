@@ -114,24 +114,20 @@
 * License : MIT
 */
 
-;(function($,window,undefined){
+;( function( $, window, undefined ){
   'use strict';
   var
-   pluginName = 'rowHeight'
+    pluginName = 'rowHeight'
   ;
-  $.fn[pluginName] = function(target,options){
-    if(this.length && !this.data(pluginName)){
-      this.data(
-         pluginName
-        ,_inherit($[pluginName])
-          .init(this,target,options)
-      );
+  $.fn[ pluginName ] = function( target, options ){
+    if( this.length && !this.data( pluginName ) ){
+      this.data( pluginName, _inherit( $[ pluginName ] ).init( this, target, options ) );
     }
     return this;
   };
-  $[pluginName] = {
+  $[ pluginName ] = {
      $elements : null
-    ,timeoutId : 0
+    ,timeoutId : null
     ,handler   : undefined
     ,settings  : {
        firstClassName : ''
@@ -144,163 +140,161 @@
       ,bindObj        : window
       ,forEachRow     : true
     }
-    ,init : function($elements,target,options){
+    ,init : function( $elements, target, options ){
       var
-       that = this
-      ,settings
+         that = this
+        ,settings
       ;
-      if(typeof target === 'object'){
+      if( typeof target === 'object' && options === undefined ){
         options = target;
       }
-      settings = this.settings = $.extend({},this.settings,options);
+      settings = this.settings = $.extend( {}, this.settings, options );
       this.$elements = $elements;
-      this.run($elements,target,settings);
-      if(settings.bindType){
-        this.handler = function(){
-          clearTimeout(that.timeoutId);
-          that.timeoutId = setTimeout(function(){
-            that.run($elements,target,settings);
-          },settings.delay);
+      this.run( $elements, target, settings );
+      if( settings.bindType ){
+        this.handler = function() {
+          clearTimeout( that.timeoutId );
+          that.timeoutId = setTimeout( function(){
+            that.run( $elements, target, settings );
+          }, settings.delay );
         };
-        $(settings.bindObj)
-          .on(settings.bindType,this.handler)
+        $( settings.bindObj )
+          .on( settings.bindType, this.handler )
         ;
       }
       return this;
     }
-    ,run : function(elements,target,options,flag){
+    ,run : function( elements, target, options, flag ){
       var
-       that      = this
-      ,settings
-      ,heights   = []
-      ,$elements
-      ,paired$
-      ,$targets
-      ,$ends
+         that      = this
+        ,settings
+        ,heights   = []
+        ,$elements
+        ,paired$
+        ,$targets
+        ,$ends
       ;
-      if(!elements){
+      if( !elements ){
         $elements = this.$elements;
       }else{
-        $elements = (elements instanceof jQuery)?elements:$(elements);
+        $elements = ( elements instanceof jQuery )? elements: $( elements );
       }
-      if(!$elements){
+      if( !$elements ){
         return this;
       }
-      if(typeof target === 'string'){
-        $elements = $elements.find(target);
+      if( typeof target === 'string' ){
+        $elements = $elements.find( target );
       }
-      if(typeof target === 'object'){
+      if( typeof target === 'object' ){
         options = target;
       }
       settings = $.extend({},this.settings,options);
-      if(!flag && $.isFunction(settings.onBefore)){
+      if( !flag && $.isFunction( settings.onBefore ) ){
         settings.onBefore();
       }
-      if(settings.forEachRow === true){
-        paired$ = this.getRow($elements);
+      if( settings.forEachRow === true ){
+        paired$ = this.getRow( $elements );
         $targets = paired$[0];
         $ends  = paired$[1];
-      }else if(settings.forEachRow === false){
+      }else if( settings.forEachRow === false ){
         $targets = $elements;
       }
       $targets
-        .css(settings.cssProp,'')
-        .each(function(i){
+        .css( settings.cssProp, '' )
+        .each( function( index ){
           var
-           $this   = $(this)
-          ,boxType = $this.css('boxSizing')
+             $this   = $( this )
+            ,boxType = $this.css('boxSizing')
           ;
-          if(boxType === 'border-box') {
-            heights[heights.length] = $this.outerHeight();
+          if( boxType === 'border-box' ) {
+            heights[ heights.length ] = $this.outerHeight();
           }else{
-            heights[heights.length] = $this.height();
+            heights[ heights.length ] = $this.height();
           }
-          if(settings.firstClassName){
-            if(i === 0) {
-              $this.addClass(settings.firstClassName);
+          if( settings.firstClassName ){
+            if( index === 0 ){
+              $this.addClass( settings.firstClassName );
             }else{
-              $this.removeClass(settings.firstClassName);
+              $this.removeClass( settings.firstClassName );
             }
           }
-          if(settings.lastClassName){
-            if(i === $targets.length-1){
-              $this.addClass(settings.lastClassName);
+          if( settings.lastClassName ){
+            if( index === $targets.length - 1 ){
+              $this.addClass( settings.lastClassName );
             }else {
-              $this.removeClass(settings.lastClassName);
+              $this.removeClass( settings.lastClassName );
             }
           }
         })
-        .css(settings.cssProp,Math.max.apply(null,heights) + 'px')
+        .css( settings.cssProp, Math.max.apply( null, heights ) + 'px' )
       ;
-      setTimeout(
-        function(){
-          if($ends && $ends.length){
-            that.run($ends,undefined,settings,1);
-          }else{
-            if($.isFunction(settings.onComplete)){
-              settings.onComplete();
-            }
+      setTimeout( function(){
+        if( $ends && $ends.length ){
+          that.run( $ends, undefined, settings, 1 );
+        }else{
+          if( $.isFunction( settings.onComplete ) ){
+            settings.onComplete();
           }
         }
-        ,1
-      );
+      },1 );
       return this;
     }
-    ,getRow : function($targets){
+    ,getRow : function( $targets ){
       var
-       firstOffsetTop
-      ,$firstRowGroup
-      ,$ends
+         firstOffsetTop
+        ,$firstRowGroup
+        ,$ends
       ;
       $targets
-        .each(function(i){
+        .each( function( index ){
           var
-           $this         = $(this)
-          ,thisOffsetTop = $this.offset().top
+             $this         = $(this)
+            ,thisOffsetTop = $this.offset().top
           ;
-          if(i === 0){
+          if( index === 0 ){
             firstOffsetTop = thisOffsetTop;
           }
-          if(firstOffsetTop === thisOffsetTop){
-            if(!$firstRowGroup){
+          if( firstOffsetTop === thisOffsetTop ){
+            if( !$firstRowGroup ){
               $firstRowGroup = $this;
-            }else{
-              $.merge($firstRowGroup,$this);
+            } else {
+              $.merge( $firstRowGroup, $this );
             }
-          }else{
-            if(!$ends) {
+          } else {
+            if( !$ends ) {
               $ends = $this;
-            }else{
-              $.merge($ends,$this);
+            } else {
+              $.merge( $ends, $this );
             }
           }
         })
       ;
-      return [$firstRowGroup,$ends];
+      return [ $firstRowGroup, $ends ];
     }
     ,destroy : function(){
-      clearTimeout(this.timeoutId);
-      if(this.settings.bindType){
-        $(this.settings.bindObj).off(this.settings.bindType,this.handler);
+      clearTimeout( this.timeoutId );
+      this.timeoutId = null;
+      if( this.settings.bindType ){
+        $( this.settings.bindObj ).off( this.settings.bindType, this.handler );
       }
       return this
         .$elements
-        .removeData(pluginName)
-        .css(this.settings.cssProp,'')
-        .removeClass(this.settings.firstClassName)
-        .removeClass(this.settings.lastClassName)
+        .removeData( pluginName )
+        .css( this.settings.cssProp, '' )
+        .removeClass( this.settings.firstClassName )
+        .removeClass( this.settings.lastClassName )
       ;
     }
   };
-  function _inherit(o){
-    if(Object.create){
-      return Object.create(o);
+  function _inherit( o ){
+    if( Object.create ){
+      return Object.create( o );
     }
     var F = function(){};
     F.prototype = o;
     return new F();
   }
-})(jQuery,window);
+} )( jQuery, window );
 (function($){
   var
    options1 = {
