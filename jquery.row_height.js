@@ -10,12 +10,6 @@
   var
     pluginName = 'rowHeight'
   ;
-  $.fn[ pluginName ] = function( target, options ){
-    if( this.length && !this.data( pluginName ) ){
-      this.data( pluginName, _inherit( $[ pluginName ] ).init( this, target, options ) );
-    }
-    return this;
-  };
   $[ pluginName ] = {
      $elements : null
     ,timeoutId : null
@@ -79,7 +73,7 @@
       if( typeof target === 'object' ){
         options = target;
       }
-      settings = $.extend({},this.settings,options);
+      settings = $.extend( {}, this.settings, options );
       if( !flag && $.isFunction( settings.onBefore ) ){
         settings.onBefore();
       }
@@ -176,6 +170,17 @@
         .removeClass( this.settings.lastClassName )
       ;
     }
+  };
+  $.fn[ pluginName ] = function( arg, options ){
+    var thisData = this.data( pluginName );
+    if( thisData ) {
+      if( thisData[ arg ] ) {
+        return thisData[ arg ].apply( thisData, Array.prototype.slice.call( arguments, 1 ) );
+      }
+    } else if ( !$[ pluginName ][ arg ] ) {
+      this.data( pluginName, _inherit( $[ pluginName ] ).init( this, arg, options ) );
+    }
+    return this;
   };
   function _inherit( o ){
     if( Object.create ){

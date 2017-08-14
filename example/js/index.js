@@ -119,12 +119,6 @@
   var
     pluginName = 'rowHeight'
   ;
-  $.fn[ pluginName ] = function( target, options ){
-    if( this.length && !this.data( pluginName ) ){
-      this.data( pluginName, _inherit( $[ pluginName ] ).init( this, target, options ) );
-    }
-    return this;
-  };
   $[ pluginName ] = {
      $elements : null
     ,timeoutId : null
@@ -188,7 +182,7 @@
       if( typeof target === 'object' ){
         options = target;
       }
-      settings = $.extend({},this.settings,options);
+      settings = $.extend( {}, this.settings, options );
       if( !flag && $.isFunction( settings.onBefore ) ){
         settings.onBefore();
       }
@@ -286,6 +280,17 @@
       ;
     }
   };
+  $.fn[ pluginName ] = function( arg, options ){
+    var thisData = this.data( pluginName );
+    if( thisData ) {
+      if( thisData[ arg ] ) {
+        return thisData[ arg ].apply( thisData, Array.prototype.slice.call( arguments, 1 ) );
+      }
+    } else if ( !$[ pluginName ][ arg ] ) {
+      this.data( pluginName, _inherit( $[ pluginName ] ).init( this, arg, options ) );
+    }
+    return this;
+  };
   function _inherit( o ){
     if( Object.create ){
       return Object.create( o );
@@ -295,42 +300,38 @@
     return new F();
   }
 } )( jQuery, window );
-(function($){
+( function( $ ){
   var
-   options1 = {
-    bindType :'elementresize fontresize'
-   }
-  ,options2 = {
-     bindType       :'elementresize fontresize'
-    ,firstClassName : 'js-first'
-    ,lastClassName  : 'js-last'
-    ,onComplete     : function(){
-      $.rowHeight.run('#list2>li');
+     options1 = {
+       bindType :'elementresize fontresize'
+     }
+    ,options2 = {
+       bindType       :'elementresize fontresize'
+      ,firstClassName : 'js-first'
+      ,lastClassName  : 'js-last'
+      ,onComplete     : function(){
+        $.rowHeight.run('#list2>li');
+      }
     }
-  }
-  ,$list1 = $('#list1>li').rowHeight(options1)
-  ,$list2 = $('#list2').find('>li,>li div').rowHeight(options2)
+    ,$list1 = $('#list1>li').rowHeight( options1 )
+    ,$list2 = $('#list2').find('>li,>li div').rowHeight( options2 )
   ;
 
-  $('#list1_i').on('click',function(){
-    $list1.rowHeight(options1);
+  $('#list1_i').on( 'click', function(){
+    $list1.rowHeight( options1 );
     return false;
   });
-  $('#list2_i').on('click',function(){
-    $list2.rowHeight(options2);
+  $('#list2_i').on( 'click', function(){
+    $list2.rowHeight( options2 );
     return false;
   });
-  $('#list1_d').on('click',function(){
-    if($list1.data('rowHeight')){
-      $list1.data('rowHeight').destroy();
-    }
+  $('#list1_d').on( 'click', function(){
+    $list1.rowHeight('destroy');
     return false;
   });
-  $('#list2_d').on('click',function(){
-    if($list2.data('rowHeight')){
-      $list2.data('rowHeight').destroy().children('div').css('height','');
-    }
+  $('#list2_d').on( 'click', function(){
+    $list2.rowHeight('destroy').children('div').css( 'height', '' );
     return false;
   });
-})(jQuery);
+} )( jQuery );
 //# sourceMappingURL=index.js.map

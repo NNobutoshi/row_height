@@ -24,15 +24,11 @@
     return false;
   });
   $('#list1_d').on( 'click', function(){
-    if( $list1.data('rowHeight') ){
-      $list1.data('rowHeight').destroy();
-    }
+    $list1.rowHeight('destroy');
     return false;
   });
   $('#list2_d').on( 'click', function(){
-    if( $list2.data('rowHeight') ){
-      $list2.data('rowHeight').destroy().children('div').css( 'height', '' );
-    }
+    $list2.rowHeight('destroy').children('div').css( 'height', '' );
     return false;
   });
 } )( jQuery );
