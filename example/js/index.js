@@ -133,15 +133,17 @@
       ,bindType       : ''
       ,bindObj        : window
       ,forEachRow     : true
-      ,children       : null
     }
-    ,init : function( $elements, options ) {
+    ,init : function( $elements, children, options ) {
       var
          that = this
         ,settings
       ;
       settings = this.settings = $.extend( {}, this.settings, options );
       this.$elements = $elements;
+      if( children ) {
+        $elements = this.$children = $elements.find( children );
+      }
       if( settings.bindType ) {
         this.handler = function() {
           clearTimeout( that.timeoutId );
@@ -153,6 +155,7 @@
           .on( settings.bindType, this.handler )
         ;
       }
+      that.run( $elements, settings );
       return this;
     }
     ,run : function( elements, options ) {
@@ -162,31 +165,22 @@
         ,$elements
         ,deferred
       ;
-      if( typeof elements === 'string' ) {
-        $elements = $( elements );
-      }else if( elements instanceof jQuery ) {
+      if( elements instanceof jQuery ) {
         $elements = elements;
-      } else if( typeof elements === 'object' ) {
-        $elements = this.$elements;
-        options = elements;
-      } else {
-        $elements = this.$elements;
-      }
-      if( $elements === null ) {
-        return this;
+      } else if( elements ) {
+        $elements = $( elements );
       }
       settings = $.extend( {}, this.settings, options );
-      if( settings.children ){
-        $elements = $elements.find( settings.children );
-      }
       if( $.isFunction( settings.onBefore ) ) {
         settings.onBefore();
       }
-      deferred = settings.deferred;
-      this.alignHeights( $elements, settings, deferred );
+      if( $elements ) {
+        deferred = settings.deferred;
+        this.align( $elements, settings, deferred );
+      }
       return this;
     }
-    ,alignHeights : function( $elements , settings, deferred ) {
+    ,align : function( $elements , settings, deferred ) {
       var
          that      = this
         ,heights   = []
@@ -197,8 +191,6 @@
         paired$ = this.getRow( $elements );
         $elements = paired$[0];
         $ends  = paired$[1];
-      }else if( settings.forEachRow === false ) {
-        $targets = $elements;
       }
       $elements
         .css( settings.cssProp, '' )
@@ -232,10 +224,11 @@
       setTimeout( function() {
         if( $ends && $ends.length ){
           settings.children = null;
-          that.alignHeights( $ends, settings, deferred );
+          that.align( $ends, settings, deferred );
         }else{
           if( deferred ) {
             deferred.resolve();
+            delete that.deferred;
           }
           if( $.isFunction( settings.onComplete ) ) {
             settings.onComplete();
@@ -243,13 +236,13 @@
         }
       }, 1 );
     }
-    ,getRow : function( $targets ) {
+    ,getRow : function( $elements ) {
       var
          firstOffsetTop
         ,$firstRowGroup
         ,$ends
       ;
-      $targets
+      $elements
         .each( function( index ) {
           var
              $this         = $(this)
@@ -276,58 +269,42 @@
       return [ $firstRowGroup, $ends ];
     }
     ,destroy : function() {
+      var $elements;
       clearTimeout( this.timeoutId );
       this.timeoutId = null;
       if( this.settings.bindType ) {
         $( this.settings.bindObj ).off( this.settings.bindType, this.handler );
       }
-      if( this.settings.children ) {
-        this
-          .$elements
-          .find( this.settings.children )
-          .css( this.settings.cssProp, '' )
-          .removeClass( this.settings.firstClassName )
-          .removeClass( this.settings.lastClassName )
-        ;
+      delete this.deferred;
+      if( this.$children ) {
+        $elements = this.$children;
+      } else {
+        $elements = this.$elements;
       }
-      return this
-        .$elements
+      $elements
         .css( this.settings.cssProp, '' )
         .removeClass( this.settings.firstClassName )
         .removeClass( this.settings.lastClassName )
+      ;
+      return this
+        .$elements
         .removeData( pluginName )
       ;
-    }
-    ,when: function( elements, options ) {
-      var
-         deferred = $.Deferred()
-        ,settings
-      ;
-      if( typeof elements === 'object' ) {
-        options = elements;
-        elements = null;
-      }
-      settings = $.extend( {}, this.settings, options );
-      settings.deferred = deferred;
-      this.run( elements, settings );
-      this.deferred = deferred;
-      return this;
     }
     ,then: function( elements, options ) {
       var
          deferred = $.Deferred()
-        ,settings
         ,that     = this
       ;
-      if( typeof elements === 'object' ) {
-        options = elements;
-        elements = null;
+      options = options || {};
+      options.deferred = deferred;
+      if( this.deferred ) {
+        this.deferred.promise().then( function() {
+          that.run( elements, options );
+        } );
+      } else {
+        this.run( elements, options );
       }
-      settings = $.extend( {}, this.settings, options );
-      settings.deferred = deferred;
-      this.deferred.promise().then( function() {
-        that.run( elements, settings );
-      } );
       this.deferred = deferred;
       return this;
     }
@@ -337,29 +314,40 @@
        rowHeight
       ,$elements = this
       ,options
+      ,children
+      ,_isOptions = function( obj ) {
+        return typeof obj === 'object' && ( obj.nodeType === undefined || obj.nodeType !== 1 ) && obj instanceof jQuery === false;
+      }
     ;
     if( !this.data( pluginName ) ) {
       if ( $[ pluginName ][ arg1 ] ) {
-        if( typeof arg2 === 'string' ) {
+        if( arg2 && arg3 ) {
+          children = arg2;
           options = arg3;
-        } else {
-          options = arg2;
+        } else if( arg2 ) {
+          if( _isOptions( arg2 ) ) {
+            options = arg2;
+          } else {
+            children = arg2;
+          }
         }
       } else {
-        if( typeof arg1 === 'string' ) {
+        if( arg1 && arg2 ) {
+          children = arg1;
           options = arg2;
-        } else {
-          options = arg1;
+        } else if( arg1 ) {
+          if( _isOptions( arg1 ) ) {
+            options = arg1;
+          } else {
+            children = arg1;
+          }
         }
       }
-      this.data( pluginName, _inherit( $[ pluginName ] ).init( $elements, options ) );
+      this.data( pluginName, _inherit( $[ pluginName ] ).init( $elements, children, options ) );
     }
     rowHeight = this.data( pluginName );
     if ( rowHeight[ arg1 ] ) {
       return rowHeight[ arg1 ].apply( rowHeight, Array.prototype.slice.call( arguments, 1 ) );
-    } else {
-      options = arg1;
-      rowHeight.run( this, options );
     }
     return this;
   };
@@ -367,7 +355,7 @@
     if( Object.create ) {
       return Object.create( o );
     }
-    var F = function(){};
+    var F = function() {};
     F.prototype = o;
     return new F();
   }
@@ -384,7 +372,8 @@
       ,lastClassName  : 'js-last'
       ,bindType       : 'elementresize fontresize'
       ,onComplete     : function() {
-        $.rowHeight.when( '#list2>li>div' )
+        $.rowHeight
+          .then( '#list2>li>div' )
           .then( '#list2>li>div>div' )
           .then( '#list2>li>div' )
           .then( '#list2>li' )
@@ -392,25 +381,24 @@
       }
     }
     ,$list1 = $('#list1>li').rowHeight( options1 )
-    ,$list2 = $('#list2>li').rowHeight( options2 )
+    ,$list2 = $('#list2').rowHeight( '>li', options2 )
   ;
-  $('#list1_i').on( 'click', function(){
+  $('#list1_i').on( 'click', function() {
     $list1.rowHeight( options1 );
     return false;
   });
-  $('#list2_i').on( 'click', function(){
-    $list2.rowHeight( options2 );
-    return false;
-  });
-  $('#list1_d').on( 'click', function(){
+  $('#list1_d').on( 'click', function() {
     $list1.rowHeight('destroy');
     return false;
   });
-  $('#list2_d').on( 'click', function(){
+  $('#list2_i').on( 'click', function() {
+    $list2.rowHeight( '>li', options2 );
+    return false;
+  });
+  $('#list2_d').on( 'click', function() {
     $list2.rowHeight('destroy').children('div').css( 'height', '' );
     return false;
   });
-  $('#list1>li').rowHeight( options1 );
-  $('#list1>li').rowHeight('run');
+
 } )( jQuery );
 //# sourceMappingURL=index.js.map
