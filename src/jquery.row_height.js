@@ -32,10 +32,10 @@
       ;
       settings = this.settings = $.extend( {}, this.settings, options );
       this.$elements = $elements;
-      if( children ) {
+      if ( children ) {
         $elements = this.$children = $elements.find( children );
       }
-      if( settings.bindType ) {
+      if ( settings.bindType ) {
         this.handler = function() {
           clearTimeout( that.timeoutId );
           that.timeoutId = setTimeout( function(){
@@ -56,16 +56,16 @@
         ,$elements
         ,deferred
       ;
-      if( elements instanceof jQuery ) {
+      if ( elements instanceof jQuery ) {
         $elements = elements;
-      } else if( elements ) {
+      } else if ( elements ) {
         $elements = $( elements );
       }
       settings = $.extend( {}, this.settings, options );
-      if( $.isFunction( settings.onBefore ) ) {
+      if ( $.isFunction( settings.onBefore ) ) {
         settings.onBefore();
       }
-      if( $elements ) {
+      if ( $elements ) {
         deferred = settings.deferred;
         this.align( $elements, settings, deferred );
       }
@@ -78,7 +78,7 @@
         ,paired$
         ,$ends
       ;
-      if( settings.forEachRow === true ) {
+      if ( settings.forEachRow === true ) {
         paired$ = this.getRow( $elements );
         $elements = paired$[0];
         $ends  = paired$[1];
@@ -90,38 +90,38 @@
              $this   = $( this )
             ,boxType = $this.css('boxSizing')
           ;
-          if( boxType === 'border-box' ) {
+          if ( boxType === 'border-box' ) {
             heights[ heights.length ] = $this.outerHeight();
-          }else{
+          } else {
             heights[ heights.length ] = $this.height();
           }
-          if( settings.firstClassName ){
-            if( index === 0 ){
+          if ( settings.firstClassName ) {
+            if ( index === 0 ) {
               $this.addClass( settings.firstClassName );
-            }else{
+            } else {
               $this.removeClass( settings.firstClassName );
             }
           }
-          if( settings.lastClassName ){
-            if( index === $elements.length - 1 ){
+          if ( settings.lastClassName ) {
+            if ( index === $elements.length - 1 ) {
               $this.addClass( settings.lastClassName );
-            }else {
+            } else {
               $this.removeClass( settings.lastClassName );
             }
           }
-        })
+        } )
         .css( settings.cssProp, Math.max.apply( null, heights ) + 'px' )
       ;
       setTimeout( function() {
-        if( $ends && $ends.length ){
+        if ( $ends && $ends.length ) {
           settings.children = null;
           that.align( $ends, settings, deferred );
-        }else{
-          if( deferred ) {
+        } else {
+          if ( deferred ) {
             deferred.resolve();
             delete that.deferred;
           }
-          if( $.isFunction( settings.onComplete ) ) {
+          if ( $.isFunction( settings.onComplete ) ) {
             settings.onComplete();
           }
         }
@@ -139,17 +139,17 @@
              $this         = $(this)
             ,thisOffsetTop = $this.offset().top
           ;
-          if( index === 0 ){
+          if ( index === 0 ) {
             firstOffsetTop = thisOffsetTop;
           }
-          if( firstOffsetTop === thisOffsetTop ){
-            if( !$firstRowGroup ){
+          if ( firstOffsetTop === thisOffsetTop ){
+            if ( !$firstRowGroup ) {
               $firstRowGroup = $this;
             } else {
               $.merge( $firstRowGroup, $this );
             }
           } else {
-            if( !$ends ) {
+            if ( !$ends ) {
               $ends = $this;
             } else {
               $.merge( $ends, $this );
@@ -163,11 +163,11 @@
       var $elements;
       clearTimeout( this.timeoutId );
       this.timeoutId = null;
-      if( this.settings.bindType ) {
+      if ( this.settings.bindType ) {
         $( this.settings.bindObj ).off( this.settings.bindType, this.handler );
       }
       delete this.deferred;
-      if( this.$children ) {
+      if ( this.$children ) {
         $elements = this.$children;
       } else {
         $elements = this.$elements;
@@ -189,7 +189,7 @@
       ;
       options = options || {};
       options.deferred = deferred;
-      if( this.deferred ) {
+      if ( this.deferred ) {
         this.deferred.promise().then( function() {
           that.run( elements, options );
         } );
@@ -210,24 +210,24 @@
         return typeof obj === 'object' && ( obj.nodeType === undefined || obj.nodeType !== 1 ) && obj instanceof jQuery === false;
       }
     ;
-    if( !this.data( pluginName ) ) {
+    if ( !this.data( pluginName ) ) {
       if ( $[ pluginName ][ arg1 ] ) {
-        if( arg2 && arg3 ) {
+        if ( arg2 && arg3 ) {
           children = arg2;
           options = arg3;
-        } else if( arg2 ) {
-          if( _isOptions( arg2 ) ) {
+        } else if ( arg2 ) {
+          if ( _isOptions( arg2 ) ) {
             options = arg2;
           } else {
             children = arg2;
           }
         }
       } else {
-        if( arg1 && arg2 ) {
+        if ( arg1 && arg2 ) {
           children = arg1;
           options = arg2;
-        } else if( arg1 ) {
-          if( _isOptions( arg1 ) ) {
+        } else if ( arg1 ) {
+          if ( _isOptions( arg1 ) ) {
             options = arg1;
           } else {
             children = arg1;
@@ -243,7 +243,7 @@
     return this;
   };
   function _inherit( o ) {
-    if( Object.create ) {
+    if ( Object.create ) {
       return Object.create( o );
     }
     var F = function() {};
