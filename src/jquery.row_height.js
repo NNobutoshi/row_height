@@ -1,6 +1,6 @@
 /*!
 * jQuery.row_height
-* version : 3.0.2
+* version : 3.1.0
 * link    : https://github.com/NNobutoshi/row_height/
 * License : MIT
 */
