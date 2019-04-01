@@ -1,21 +1,21 @@
 /*!
 * jQuery.row_height
-* version : 3.0.1
+* version : 3.0.2
 * link    : https://github.com/NNobutoshi/row_height/
 * License : MIT
 */
 
-;( function( $, window, undefined ) {
+( function( $, window, undefined ) {
   'use strict';
   var
     pluginName = 'rowHeight'
   ;
   $[ pluginName ] = {
-     $elements : null
+    $elements  : null
     ,timeoutId : null
     ,handler   : null
     ,settings  : {
-       firstClassName : ''
+      firstClassName  : ''
       ,lastClassName  : ''
       ,delay          : 200
       ,onBefore       : null
@@ -27,7 +27,7 @@
     }
     ,init : function( $elements, children, options ) {
       var
-         that = this
+        that = this
         ,settings
       ;
       settings = this.settings = $.extend( {}, this.settings, options );
@@ -49,12 +49,10 @@
       that.run( $elements, settings );
       return this;
     }
-    ,run : function( elements, options ) {
+    ,run : function( elements, options, deferred ) {
       var
-         that      = this
-        ,settings
+        settings
         ,$elements
-        ,deferred
       ;
       if ( elements instanceof jQuery ) {
         $elements = elements;
@@ -66,15 +64,14 @@
         settings.onBefore();
       }
       if ( $elements ) {
-        deferred = settings.deferred;
         this.align( $elements, settings, deferred );
       }
       return this;
     }
     ,align : function( $elements , settings, deferred ) {
       var
-         that      = this
-        ,heights   = []
+        that     = this
+        ,heights = []
         ,paired$
         ,$ends
       ;
@@ -87,7 +84,7 @@
         .css( settings.cssProp, '' )
         .each( function( index ) {
           var
-             $this   = $( this )
+            $this    = $( this )
             ,boxType = $this.css('boxSizing')
           ;
           if ( boxType === 'border-box' ) {
@@ -129,14 +126,14 @@
     }
     ,getRow : function( $elements ) {
       var
-         firstOffsetTop
+        firstOffsetTop
         ,$firstRowGroup
         ,$ends
       ;
       $elements
         .each( function( index ) {
           var
-             $this         = $(this)
+            $this         = $(this)
             ,thisOffsetTop = $this.offset().top
           ;
           if ( index === 0 ) {
@@ -184,17 +181,16 @@
     }
     ,then: function( elements, options ) {
       var
-         deferred = $.Deferred()
-        ,that     = this
+        deferred = $.Deferred()
+        ,that    = this
       ;
       options = options || {};
-      options.deferred = deferred;
       if ( this.deferred ) {
         this.deferred.promise().then( function() {
-          that.run( elements, options );
+          that.run( elements, options, deferred );
         } );
       } else {
-        this.run( elements, options );
+        this.run( elements, options, deferred );
       }
       this.deferred = deferred;
       return this;
@@ -202,7 +198,7 @@
   };
   $.fn[ pluginName ] = function( arg1, arg2, arg3 ) {
     var
-       rowHeight
+      rowHeight
       ,$elements = this
       ,options
       ,children

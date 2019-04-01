@@ -49,11 +49,10 @@
       that.run( $elements, settings );
       return this;
     }
-    ,run : function( elements, options ) {
+    ,run : function( elements, options, deferred ) {
       var
         settings
         ,$elements
-        ,deferred
       ;
       if ( elements instanceof jQuery ) {
         $elements = elements;
@@ -65,7 +64,6 @@
         settings.onBefore();
       }
       if ( $elements ) {
-        deferred = settings.deferred;
         this.align( $elements, settings, deferred );
       }
       return this;
@@ -187,13 +185,12 @@
         ,that    = this
       ;
       options = options || {};
-      options.deferred = deferred;
       if ( this.deferred ) {
         this.deferred.promise().then( function() {
-          that.run( elements, options );
+          that.run( elements, options, deferred );
         } );
       } else {
-        this.run( elements, options );
+        this.run( elements, options, deferred );
       }
       this.deferred = deferred;
       return this;

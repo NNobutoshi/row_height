@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>example</title>
-<style type="text/css">
+<style>
 body,html {
 	margin:0;
 	padding:0;
@@ -14,11 +14,12 @@ body,html {
 	overflow:hidden;
 	}
 #test ul {
-	margin:0 -20px 0 0;
+	margin: 0;
 	padding:0;
+	clear: left;
 }
 #test li {
-	border: solid 1px #f00;
+	background-color: #dee;
 	width: 60px;
 	padding: 10px 10px;
 	list-style: none;
@@ -35,6 +36,12 @@ body,html {
 #list1 li {
 	box-sizing: border-box;
 }
+#list3>li {
+	width: 100px;
+}
+#list3>li>div+div {
+	margin-top: 1em;
+}
 .btnGroup {
 	clear: both;
 	padding-top: 1em;
@@ -47,6 +54,7 @@ body,html {
 </head>
 <body>
 <div id="test">
+	<p class="btnGroup"><a href="#" class="button" id="list1_i">init</a><a href="#" class="button" id="list1_d">destroy</a></p>
 	<ul id="list1">
 	<li>0<br>+<br>+<br>+<br>+<br>+<br></li>
 	<li>1<br>+<br>+<br>+<br></li>
@@ -70,7 +78,7 @@ body,html {
 	<li>19<br>+<br>+<br>+<br></li>
 	<li>20<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+</li>
 	</ul>
-	<p class="btnGroup"><a href="#container" class="button" id="list1_i">init</a><a href="#container" class="button" id="list1_d">destroy</a></p>
+	<p class="btnGroup"><a href="#" class="button" id="list2_i">init</a><a href="#" class="button" id="list2_d">destroy</a></p>
 	<ul id="list2">
 	<li>0<div><div>+</div></div>+<br><div>+<br></div><br>+<br>+<br>+<br>+<br>+<br></li>
 	<li>1<div><div>+<br>+<br></div></div>+<br><div>+<br>+<br></div><br>+<br>+<br>+<br></li>
@@ -94,7 +102,28 @@ body,html {
 	<li>19<div>+<br>+<br>+<br>+<br></div>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
 	<li>20<div>+<br>+<br>+<br>+<br>+<br></div>+<br>+<br>+<br>+<br>+<br></li>
 	</ul>
-	<p class="btnGroup"><a href="#container" class="button" id="list2_i">init</a><a href="#container" class="button" id="list2_d">destroy</a></p>
+	<ul id="list3" class="list3">
+	<li>
+		<div>0<br>+<br>+<br></div>
+		<div>1<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></div>
+		<div>2<br>+<br>+<br>+<br>+<br>+<br></div>
+		<div>3<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></div>
+	</li>
+	<li>
+		<div>4<br>+<br>+<br>+</div>
+		<div>5<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></div>
+	</li>
+	<li>
+		<div>6<br>+<br>+<br></div>
+		<div>7<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></div>
+		<div>8<br>+<br>+<br>+</div>
+		<div>9<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></div>
+	</li>
+	<li>
+		<div>10<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></div>
+		<div>11<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></div>
+	</li>
+	</ul>
 </div>
 
 <!--[if lte IE 9]>

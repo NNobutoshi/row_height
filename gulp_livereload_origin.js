@@ -1,6 +1,6 @@
 
 var
-   gulp         = require('gulp')
+  gulp         = require('gulp')
   ,bs           = require('browser-sync')
   ,type         = 'normal' // 'normal' or 'proxy'
   ,proxy        = 'localhost:8000'
@@ -9,21 +9,21 @@ var
   ,flag         = false
   ,_init        = function() {
     var
-       timeoutId = null
+      timeoutId = null
       ,time      = 300
     ;
     if( type === 'normal') {
       bs( {
         server : {
-            baseDir: documentRoot
+          baseDir : documentRoot
         }
         ,port    : port
         ,browser : [ 'chrome' ]
       } );
     } else if ( type === 'proxy' ) {
       bs( {
-       proxy : proxy
-      ,port  : port
+        proxy : proxy
+        ,port : port
       } );
     } else {
       return false;

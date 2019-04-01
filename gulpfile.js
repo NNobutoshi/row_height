@@ -1,27 +1,25 @@
 var
-   fs           = require('fs')
-  ,gulp         = require('gulp')
-  ,concat       = require('gulp-concat')
-  ,plumber      = require('gulp-plumber')
-  ,sourcemap    = require('gulp-sourcemaps')
-  ,gulpIf       = require('gulp-if')
-  ,liveReload   = fs.existsSync('./gulp_livereload.js')? require('./gulp_livereload.js'): null
+  fs           = require('fs')
+  ,gulp        = require('gulp')
+  ,concat      = require('gulp-concat')
+  ,plumber     = require('gulp-plumber')
+  ,sourcemap   = require('gulp-sourcemaps')
+  ,gulpIf      = require('gulp-if')
+  ,liveReload  = fs.existsSync('./gulp_livereload.js')? require('./gulp_livereload.js'): null
   ,dist            = 'example'
   ,src             = 'src'
   ,needsSourcemap  = true
   ,tasks = {
-     'js:concat' : {
+    'js:concat' : {
       src : [
-         src + '/jquery.resize_events.js'
+        src  + '/jquery.resize_events.js'
         ,src + '/jquery.row_height.js'
         ,src + '/init.js'
       ]
       ,watch   : true
       ,default : false
-      // ,needsUglify: false
-      // ,needsSourcemap: false
     }
-    ,'js:remove' : {
+    ,'js:mv' : {
       src : [
         src + '/jquery.row_height.js'
       ]
@@ -41,7 +39,7 @@ if( typeof liveReload === 'function' && liveReload.needs === true ) {
   };
 }
 
-gulp.task( 'js:remove', [ 'js:concat' ], function() {
+gulp.task( 'js:mv', [ 'js:concat' ], function() {
   return gulp
     .src( src + '/jquery.row_height.js' )
     .pipe( gulp.dest( './' ) )
@@ -51,26 +49,25 @@ gulp.task( 'js:remove', [ 'js:concat' ], function() {
 
 gulp.task( 'js:concat', function() {
   var
-     self = tasks[ 'js:concat' ]
+    self = tasks[ 'js:concat' ]
     ,flagSourcemap = ( typeof self.needsSourcemap ==='boolean' )? self.needsSourcemap: needsSourcemap
   ;
   return gulp
     .src( self.src )
     .pipe( plumber() )
     .pipe( gulpIf(
-       flagSourcemap
-      ,sourcemap.init( { loadMaps: true } )
-     ) )
+      flagSourcemap
+      ,sourcemap.init( { loadMaps : true } )
+    ) )
     .pipe( concat( 'index.js' ) )
     .pipe( gulpIf(
-       flagSourcemap
+      flagSourcemap
       ,sourcemap.write( './' )
-     ) )
+    ) )
     .pipe( gulp.dest( dist + '/js'  ) )
   ;
 } )
 ;
-
 
 gulp.task( 'watch', _callWatchTasks );
 
@@ -83,15 +80,15 @@ function _callWatchTasks() {
       if ( tasks[ key ].watch && tasks[ key ].watch === true ) {
         gulp.watch( tasks[ key ].src, [ key ] );
       }
-  } );
+    } )
+  ;
 }
 
 function _filterDefaultTasks() {
   return Object
     .keys( tasks )
     .filter( function( key ) {
-      if ( tasks[ key ].default && tasks[ key ].default === true ) {
-        return key;
-      }
-  } );
+      return tasks[ key ].default && tasks[ key ].default === true;
+    } )
+  ;
 }

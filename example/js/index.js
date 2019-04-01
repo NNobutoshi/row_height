@@ -6,125 +6,120 @@
 */
 
 /*! elementresize  */
-;(function($,window) {
+( function( $, window ) {
   var
-   eventName = 'elementresize'
-  ,interval  = 200
+    eventName  = 'elementresize'
+    ,interval  = 200
   ;
-  $.event.special[eventName] = {
-    setup : function(){
+  $.event.special[ eventName ] = {
+    setup : function() {
       var
-       $this = $(this)
+        $this = $( this )
       ;
-      $this.data(eventName,{
-         width  : $this.width()
+      $this.data( eventName, {
+        width   : $this.width()
         ,height : $this.height()
-        ,timer  : window.setInterval(
-          function(){
-            var
-             data   = $this.data(eventName)
+        ,timer  : window.setInterval( function() {
+          var
+            data    = $this.data( eventName )
             ,width  = $this.width()
             ,height = $this.height()
-            ;
-            if (
-               data.width  !== width
-            || data.height !== height
-            ) {
-              data.width  = width;
-              data.height = height;
-              $this.triggerHandler(eventName);
-            }
+          ;
+          if (
+            data.width  !== width || data.height !== height
+          ) {
+            data.width  = width;
+            data.height = height;
+            $this.triggerHandler( eventName );
           }
-          ,interval
-        )
-      });
+        }, interval )
+      } );
     }
     ,teardown : function(){
       var
-       $this = $(this)
+        $this = $( this )
       ;
-      window.clearInterval($this.data(eventName).timer);
-      $this.removeData(eventName);
+      window.clearInterval( $this.data( eventName ).timer );
+      $this.removeData( eventName );
     }
   };
 
-  $.fn[eventName] = function(data,fn){
+  $.fn[eventName] = function( data, fn ) {
     return arguments.length > 0
-      ? this.bind(eventName,data,fn)
-      : this.trigger(eventName)
-      ;
+      ? this.bind( eventName, data, fn )
+      : this.trigger( eventName )
+    ;
   };
 
-})(jQuery,window);
+} )( jQuery, window );
 
 /*! fontresize  */
-(function($){
+( function( $ ) {
   var
-   className   = 'js-checker'
-  ,eventName   = 'fontresize'
-  ,triggerName = 'elementresize'
-  ,$checker
+    className    = 'js-checker'
+    ,eventName   = 'fontresize'
+    ,triggerName = 'elementresize'
   ;
 
   $.event.special[eventName] = {
 
     setup: function(){
       var
-       $this    = $(this)
-      ,$checker = $('<ins class="'+ className +'">&nbsp;</ins>')
-        .css({
-           display  : 'block'
-          ,left     : '-9999px'
-          ,position : 'absolute'
-        })
-        .prependTo(($.isWindow(this))?'body':this)
-        .bind(triggerName,function(){
-          $this.trigger(eventName);
-        })
+        $this    = $(this)
+        ,$checker = $('<ins class="'+ className +'">&nbsp;</ins>')
+          .css( {
+            display   : 'block'
+            ,left     : '-9999px'
+            ,position : 'absolute'
+          } )
+          .prependTo( ( $.isWindow( this ) )? 'body': this )
+          .bind( triggerName, function() {
+            $this.trigger( eventName );
+          } )
       ;
 
-      $this.data(eventName,$checker);
+      $this.data( eventName, $checker );
     }
-    ,teardown : function(){
+    ,teardown : function() {
       var
-       $this = $(this)
+        $this = $(this)
       ;
 
       $this
-        .data(eventName)
-        .unbind(triggerName,function(){
-          $this.trigger(eventName);
-        })
+        .data( eventName )
+        .unbind( triggerName, function() {
+          $this.trigger( eventName );
+        } )
         .remove()
       ;
     }
   };
-  $.fn[eventName] = function(data,fn){
+  $.fn[eventName] = function( data, fn ){
     return arguments.length > 0
-      ? this.bind(eventName,data,fn)
-      : this.trigger(eventName)
-      ;
+      ? this.bind( eventName, data, fn )
+      : this.trigger( eventName )
+    ;
   };
 
-})(jQuery);
+} )( jQuery );
 /*!
 * jQuery.row_height
-* version : 3.0.1
+* version : 3.0.2
 * link    : https://github.com/NNobutoshi/row_height/
 * License : MIT
 */
 
-;( function( $, window, undefined ) {
+( function( $, window, undefined ) {
   'use strict';
   var
     pluginName = 'rowHeight'
   ;
   $[ pluginName ] = {
-     $elements : null
+    $elements  : null
     ,timeoutId : null
     ,handler   : null
     ,settings  : {
-       firstClassName : ''
+      firstClassName  : ''
       ,lastClassName  : ''
       ,delay          : 200
       ,onBefore       : null
@@ -136,7 +131,7 @@
     }
     ,init : function( $elements, children, options ) {
       var
-         that = this
+        that = this
         ,settings
       ;
       settings = this.settings = $.extend( {}, this.settings, options );
@@ -158,12 +153,10 @@
       that.run( $elements, settings );
       return this;
     }
-    ,run : function( elements, options ) {
+    ,run : function( elements, options, deferred ) {
       var
-         that      = this
-        ,settings
+        settings
         ,$elements
-        ,deferred
       ;
       if ( elements instanceof jQuery ) {
         $elements = elements;
@@ -175,15 +168,14 @@
         settings.onBefore();
       }
       if ( $elements ) {
-        deferred = settings.deferred;
         this.align( $elements, settings, deferred );
       }
       return this;
     }
     ,align : function( $elements , settings, deferred ) {
       var
-         that      = this
-        ,heights   = []
+        that     = this
+        ,heights = []
         ,paired$
         ,$ends
       ;
@@ -196,7 +188,7 @@
         .css( settings.cssProp, '' )
         .each( function( index ) {
           var
-             $this   = $( this )
+            $this    = $( this )
             ,boxType = $this.css('boxSizing')
           ;
           if ( boxType === 'border-box' ) {
@@ -238,14 +230,14 @@
     }
     ,getRow : function( $elements ) {
       var
-         firstOffsetTop
+        firstOffsetTop
         ,$firstRowGroup
         ,$ends
       ;
       $elements
         .each( function( index ) {
           var
-             $this         = $(this)
+            $this         = $(this)
             ,thisOffsetTop = $this.offset().top
           ;
           if ( index === 0 ) {
@@ -293,17 +285,16 @@
     }
     ,then: function( elements, options ) {
       var
-         deferred = $.Deferred()
-        ,that     = this
+        deferred = $.Deferred()
+        ,that    = this
       ;
       options = options || {};
-      options.deferred = deferred;
       if ( this.deferred ) {
         this.deferred.promise().then( function() {
-          that.run( elements, options );
+          that.run( elements, options, deferred );
         } );
       } else {
-        this.run( elements, options );
+        this.run( elements, options, deferred );
       }
       this.deferred = deferred;
       return this;
@@ -311,7 +302,7 @@
   };
   $.fn[ pluginName ] = function( arg1, arg2, arg3 ) {
     var
-       rowHeight
+      rowHeight
       ,$elements = this
       ,options
       ,children
@@ -362,16 +353,16 @@
 } )( jQuery, window );
 ( function( $ ) {
   var
-     options1 = {
-       bindType : 'elementresize fontresize'
+    options1 = {
+      bindType        : 'elementresize fontresize'
       ,firstClassName : 'js-first'
       ,lastClassName  : 'js-last'
-     }
+    }
     ,options2 = {
-       firstClassName : 'js-first'
-      ,lastClassName  : 'js-last'
-      ,bindType       : 'elementresize fontresize'
-      ,onComplete     : function() {
+      firstClassName : 'js-first'
+      ,lastClassName : 'js-last'
+      ,bindType      : 'elementresize fontresize'
+      ,onComplete    : function() {
         $.rowHeight
           .then( '#list2>li>div' )
           .then( '#list2>li>div>div' )
@@ -380,8 +371,18 @@
         ;
       }
     }
+    ,options3 = {
+      bindType : 'elementresize fontresize'
+      ,onComplete : function() {
+        $.rowHeight
+          .then( '#list3>li>div' )
+          .then( '#list3>li' )
+        ;
+      }
+    }
     ,$list1 = $('#list1>li').rowHeight( options1 )
     ,$list2 = $('#list2').rowHeight( '>li', options2 )
+    ,$list3 = $('#list3').rowHeight( '>li', options3 )
   ;
   $('#list1_i').on( 'click', function() {
     $list1.rowHeight( options1 );
@@ -396,7 +397,15 @@
     return false;
   });
   $('#list2_d').on( 'click', function() {
-    $list2.rowHeight('destroy').children('div').css( 'height', '' );
+    $list2.rowHeight('destroy').find('div').css( 'height', '' );
+    return false;
+  });
+  $('#list3_i').on( 'click', function() {
+    $list3.rowHeight( '>li>div', options3 );
+    return false;
+  });
+  $('#list3_d').on( 'click', function() {
+    $list3.rowHeight('destroy');
     return false;
   });
 
