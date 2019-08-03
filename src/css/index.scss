@@ -1,0 +1,51 @@
+@charset 'UTF-8';
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
+.test {
+  zoom: 1;
+  overflow: hidden;
+  ul {
+    margin: 0;
+    padding: 0;
+    clear: left;
+  }
+  li {
+    background-color: #dee;
+    width: 60px;
+    padding: 10px;
+    list-style: none;
+    float: left;
+    margin-top: 20px;
+    margin-right: 20px;
+    div {
+      background: #ff9;
+      div {
+        background: #f99;
+      }
+    }
+  }
+}
+.list1 {
+  li {
+    box-sizing: border-box;
+  }
+}
+.list3 {
+  >li {
+    width: 100px;
+    >div+div {
+      margin-top: 1em;
+    }
+  }
+}
+.btnGroup {
+  clear: both;
+  padding-top: 1em;
+  a {
+    margin-left: 1em;
+  }
+}

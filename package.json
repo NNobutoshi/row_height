@@ -1,28 +1,72 @@
 {
-  "name": "jquery-row-height",
-  "version": "3.1.0",
-  "description": "",
-  "main": "jquery.row_height.js",
+  "name": "project-example",
+  "version": "0.0.0",
+  "description": "project example",
+  "main": "index.js",
   "scripts": {
-    "gulp": "gulp",
-    "lr": "gulp --gulpfile gulp_livereload.js"
+    "dev": "cross-env NODE_ENV=development gulp --gulpfile gulpkit.js",
+    "prod": "cross-env NODE_ENV=production gulp --gulpfile gulpkit.js",
+    "gulp": "gulp  --gulpfile gulpkit.js",
+    "lr": "node livereload.js"
   },
-  "private": true,
-  "author": "https://github.com/NNobutoshi",
-  "license": "MIT",
+  "author": "",
   "repository": {
     "type": "git"
   },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "jquery": "global:jQuery",
+    "modernizr": "global:Modernizr"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "ie >= 8",
+    "ios 7",
+    "android 4"
+  ],
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-concat": "^2.6.1",
-    "gulp-if": "^2.0.2",
-    "gulp-plumber": "^1.1.0",
-    "gulp-sourcemaps": "^2.6.0",
-    "jquery-smooth-scroll": "^2.2.0"
+    "@babel/core": "*",
+    "@babel/preset-env": "*",
+    "autoprefixer": "*",
+    "babelify": "*",
+    "browserify": "*",
+    "browserify-shim": "*",
+    "cross-env": "*",
+    "css-mqpacker": "*",
+    "del": "*",
+    "eslint-config-jquery": "*",
+    "gulp": "*",
+    "gulp-buffer": "*",
+    "gulp-changed": "*",
+    "gulp-concat": "*",
+    "gulp-duration": "*",
+    "gulp-eslint": "*",
+    "gulp-if": "*",
+    "gulp-notify": "*",
+    "gulp-plumber": "*",
+    "gulp-postcss": "*",
+    "gulp-sass": "*",
+    "gulp-sourcemaps": "*",
+    "gulp-tap": "*",
+    "gulp-uglify": "*",
+    "js-beautify": "*",
+    "lodash": "*",
+    "merge-stream": "*",
+    "pug": "*",
+    "require-dir": "*",
+    "vinyl-buffer": "*",
+    "vinyl-source-stream": "*",
+    "watchify": "*",
+    "xls-to-json": "*"
   },
   "optionalDependencies": {
-    "browser-sync": "^2.18.13"
+    "browser-sync": "*"
   },
-  "dependencies": {}
+  "dependencies": {
+    "core-js": "*"
+  }
 }

@@ -35,7 +35,7 @@
         }, interval )
       } );
     }
-    ,teardown : function(){
+    ,teardown : function() {
       var
         $this = $( this )
       ;
@@ -44,14 +44,14 @@
     }
   };
 
-  $.fn[eventName] = function( data, fn ) {
-    return arguments.length > 0
-      ? this.bind( eventName, data, fn )
-      : this.trigger( eventName )
+  $.fn[ eventName ] = function( data, fn ) {
+    return arguments.length > 0 ?
+      this.bind( eventName, data, fn ) :
+      this.trigger( eventName )
     ;
   };
 
-} )( jQuery, window );
+} )( require( 'jquery' ), window );
 
 /*! fontresize  */
 ( function( $ ) {
@@ -61,18 +61,18 @@
     ,triggerName = 'elementresize'
   ;
 
-  $.event.special[eventName] = {
+  $.event.special[ eventName ] = {
 
-    setup: function(){
+    setup: function() {
       var
-        $this    = $(this)
-        ,$checker = $('<ins class="'+ className +'">&nbsp;</ins>')
+        $this    = $( this )
+        ,$checker = $( '<ins class="' + className + '">&nbsp;</ins>' )
           .css( {
             display   : 'block'
             ,left     : '-9999px'
             ,position : 'absolute'
           } )
-          .prependTo( ( $.isWindow( this ) )? 'body': this )
+          .prependTo( ( $.isWindow( this ) ) ? 'body' : this )
           .bind( triggerName, function() {
             $this.trigger( eventName );
           } )
@@ -82,7 +82,7 @@
     }
     ,teardown : function() {
       var
-        $this = $(this)
+        $this = $( this )
       ;
 
       $this
@@ -94,11 +94,11 @@
       ;
     }
   };
-  $.fn[eventName] = function( data, fn ){
-    return arguments.length > 0
-      ? this.bind( eventName, data, fn )
-      : this.trigger( eventName )
+  $.fn[ eventName ] = function( data, fn ) {
+    return arguments.length > 0 ?
+      this.bind( eventName, data, fn ) :
+      this.trigger( eventName )
     ;
   };
 
-} )( jQuery );
+} )( require( 'jquery' ) );

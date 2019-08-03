@@ -5,10 +5,11 @@
 * License : MIT
 */
 
-( function( $, window, undefined ) {
+( function( jQuery, window ) {
   'use strict';
   var
     pluginName = 'rowHeight'
+    ,$ = jQuery
   ;
   $[ pluginName ] = {
     $elements  : null
@@ -38,7 +39,7 @@
       if ( settings.bindType ) {
         this.handler = function() {
           clearTimeout( that.timeoutId );
-          that.timeoutId = setTimeout( function(){
+          that.timeoutId = setTimeout( function() {
             that.run( $elements, settings );
           }, settings.delay );
         };
@@ -77,15 +78,15 @@
       ;
       if ( settings.forEachRow === true ) {
         paired$ = this.getRow( $elements );
-        $elements = paired$[0];
-        $ends  = paired$[1];
+        $elements = paired$[ 0 ];
+        $ends  = paired$[ 1 ];
       }
       $elements
         .css( settings.cssProp, '' )
         .each( function( index ) {
           var
             $this    = $( this )
-            ,boxType = $this.css('boxSizing')
+            ,boxType = $this.css( 'boxSizing' )
           ;
           if ( boxType === 'border-box' ) {
             heights[ heights.length ] = $this.outerHeight();
@@ -133,13 +134,13 @@
       $elements
         .each( function( index ) {
           var
-            $this         = $(this)
+            $this         = $( this )
             ,thisOffsetTop = $this.offset().top
           ;
           if ( index === 0 ) {
             firstOffsetTop = thisOffsetTop;
           }
-          if ( firstOffsetTop === thisOffsetTop ){
+          if ( firstOffsetTop === thisOffsetTop ) {
             if ( !$firstRowGroup ) {
               $firstRowGroup = $this;
             } else {
@@ -152,7 +153,7 @@
               $.merge( $ends, $this );
             }
           }
-        })
+        } )
       ;
       return [ $firstRowGroup, $ends ];
     }
@@ -203,7 +204,10 @@
       ,options
       ,children
       ,_isOptions = function( obj ) {
-        return typeof obj === 'object' && ( obj.nodeType === undefined || obj.nodeType !== 1 ) && obj instanceof jQuery === false;
+        return typeof obj === 'object' &&
+               ( obj.nodeType === undefined || obj.nodeType !== 1 ) &&
+               ( obj instanceof jQuery === false )
+        ;
       }
     ;
     if ( !this.data( pluginName ) ) {
@@ -246,4 +250,4 @@
     F.prototype = o;
     return new F();
   }
-} )( jQuery, window );
+} )( require( 'jquery' ), window );

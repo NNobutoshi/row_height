@@ -1,0 +1,30 @@
+block vars
+  -
+    let
+      page = "def"
+
+block config
+  include /_config.pug
+  -
+    siteData = {}
+    for ( var o in SiteData._defaults ) {
+      if ( SiteData[ page ] && SiteData[ page ][ o ] ) {
+        siteData[ o ] = SiteData[ page ][ o ]
+      } else {
+        siteData[ o ] = SiteData._defaults[ o ]
+      }
+    }
+
+doctype html
+html(lang=siteData.lang)
+  head(prefix=siteData.ogPrefix)
+    meta(charset="utf-8")
+    meta(name="viewport", content=siteData.viewport)
+    meta(name="format-detection", content="telephone=no")
+    title #{siteData.title}
+    block style
+    block script_head
+  body
+    block page
+    block script_body
+
