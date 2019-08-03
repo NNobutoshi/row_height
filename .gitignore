@@ -1,10 +1,9 @@
 node_modules
 *.map
-/dev/livereload.js
-/dev/.npm-version
-/dev/.node-version
-/dev/.vagrant
-/dev/package-lock.json
-/dev/config.yml
-/dev/gulpkit.js/tasks/.timestamp
-/html/examples/media/mainvisual.mp4
+/livereload.js
+/.npm-version
+/.node-version
+/.vagrant
+/package-lock.json
+/config.yml
+/gulpkit.js/tasks/.timestamp
