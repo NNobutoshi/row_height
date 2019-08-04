@@ -12,8 +12,8 @@ require( '../modules/jquery.row_height.js' );
       firstClassName : 'js-first'
       ,lastClassName : 'js-last'
       ,bindType      : 'elementresize fontresize'
-      ,onComplete    : function() {
-        $.rowHeight
+      ,onComplete    : function( $self ) {
+        $self
           .then( '#list2>li>div' )
           .then( '#list2>li>div>div' )
           .then( '#list2>li>div' )
@@ -23,8 +23,8 @@ require( '../modules/jquery.row_height.js' );
     }
     ,options3 = {
       bindType : 'elementresize fontresize'
-      ,onComplete : function() {
-        $.rowHeight
+      ,onComplete : function( $self ) {
+        $self
           .then( '#list3>li>div' )
           .then( '#list3>li' )
         ;

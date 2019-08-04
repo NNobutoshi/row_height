@@ -16,14 +16,14 @@ require('../modules/jquery.row_height.js');
     firstClassName: 'js-first',
     lastClassName: 'js-last',
     bindType: 'elementresize fontresize',
-    onComplete: function onComplete() {
-      $.rowHeight.then('#list2>li>div').then('#list2>li>div>div').then('#list2>li>div').then('#list2>li');
+    onComplete: function onComplete($self) {
+      $self.then('#list2>li>div').then('#list2>li>div>div').then('#list2>li>div').then('#list2>li');
     }
   },
       options3 = {
     bindType: 'elementresize fontresize',
-    onComplete: function onComplete() {
-      $.rowHeight.then('#list3>li>div').then('#list3>li');
+    onComplete: function onComplete($self) {
+      $self.then('#list3>li>div').then('#list3>li');
     }
   },
       $list1 = $('#list1>li').rowHeight(options1),
@@ -138,26 +138,39 @@ require('../modules/jquery.row_height.js');
 
 },{}],3:[function(require,module,exports){
 (function (global){
-"use strict";
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
+'use strict';
 /*!
 * jQuery.row_height
-* version : 3.1.0
+* version : 4.0.0
 * link    : https://github.com/NNobutoshi/row_height/
 * License : MIT
 */
-(function (jQuery, window) {
-  'use strict';
 
-  var pluginName = 'rowHeight',
-      $ = jQuery;
-  $[pluginName] = {
-    $elements: null,
-    timeoutId: null,
-    handler: null,
-    settings: {
+var _jquery = _interopRequireDefault((typeof window !== "undefined" ? window['jQuery'] : typeof global !== "undefined" ? global['jQuery'] : null));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var pluginName = 'rowHeight',
+    $ = _jquery["default"];
+
+$[pluginName] =
+/*#__PURE__*/
+function () {
+  function RowHeight() {
+    _classCallCheck(this, RowHeight);
+
+    this.$elements = null;
+    this.timeoutId = null;
+    this.handler = null;
+    this.settings = {
       firstClassName: '',
       lastClassName: '',
       delay: 200,
@@ -167,11 +180,15 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       bindType: '',
       bindObj: window,
       forEachRow: true
-    },
-    init: function init($elements, children, options) {
-      var that = this,
-          settings;
-      settings = this.settings = $.extend({}, this.settings, options);
+    };
+  }
+
+  _createClass(RowHeight, [{
+    key: "init",
+    value: function init($elements, children, options) {
+      var _this = this;
+
+      var settings = this.settings = $.extend({}, this.settings, options);
       this.$elements = $elements;
 
       if (children) {
@@ -180,30 +197,31 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       if (settings.bindType) {
         this.handler = function () {
-          clearTimeout(that.timeoutId);
-          that.timeoutId = setTimeout(function () {
-            that.run($elements, settings);
+          clearTimeout(_this.timeoutId);
+          _this.timeoutId = setTimeout(function () {
+            _this.run($elements, settings);
           }, settings.delay);
         };
 
         $(settings.bindObj).on(settings.bindType, this.handler);
       }
 
-      that.run($elements, settings);
+      this.run($elements, settings);
       return this;
-    },
-    run: function run(elements, options, deferred) {
-      var settings, $elements;
+    }
+  }, {
+    key: "run",
+    value: function run(elements, options, deferred) {
+      var settings = $.extend({}, this.settings, options);
+      var $elements;
 
-      if (elements instanceof jQuery) {
+      if (elements instanceof _jquery["default"]) {
         $elements = elements;
       } else if (elements) {
         $elements = $(elements);
       }
 
-      settings = $.extend({}, this.settings, options);
-
-      if ($.isFunction(settings.onBefore)) {
+      if (typeof settings.onBefore === 'function') {
         settings.onBefore();
       }
 
@@ -212,12 +230,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       }
 
       return this;
-    },
-    align: function align($elements, settings, deferred) {
-      var that = this,
-          heights = [],
-          paired$,
-          $ends;
+    }
+  }, {
+    key: "align",
+    value: function align($elements, settings, deferred) {
+      var _this2 = this;
+
+      var heights = [];
+      var paired$, $ends;
 
       if (settings.forEachRow === true) {
         paired$ = this.getRow($elements);
@@ -225,8 +245,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         $ends = paired$[1];
       }
 
-      $elements.css(settings.cssProp, '').each(function (index) {
-        var $this = $(this),
+      $elements.css(settings.cssProp, '').each(function (index, item) {
+        var $this = $(item),
             boxType = $this.css('boxSizing');
 
         if (boxType === 'border-box') {
@@ -254,23 +274,26 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       setTimeout(function () {
         if ($ends && $ends.length) {
           settings.children = null;
-          that.align($ends, settings, deferred);
+
+          _this2.align($ends, settings, deferred);
         } else {
           if (deferred) {
             deferred.resolve();
-            delete that.deferred;
-          }
-
-          if ($.isFunction(settings.onComplete)) {
-            settings.onComplete();
+            delete _this2.deferred;
+          } else {
+            if (typeof settings.onComplete === 'function') {
+              settings.onComplete.call(_this2, _this2);
+            }
           }
         }
       }, 1);
-    },
-    getRow: function getRow($elements) {
+    }
+  }, {
+    key: "getRow",
+    value: function getRow($elements) {
       var firstOffsetTop, $firstRowGroup, $ends;
-      $elements.each(function (index) {
-        var $this = $(this),
+      $elements.each(function (index, item) {
+        var $this = $(item),
             thisOffsetTop = $this.offset().top;
 
         if (index === 0) {
@@ -292,8 +315,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         }
       });
       return [$firstRowGroup, $ends];
-    },
-    destroy: function destroy() {
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
       var $elements;
       clearTimeout(this.timeoutId);
       this.timeoutId = null;
@@ -312,15 +337,18 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       $elements.css(this.settings.cssProp, '').removeClass(this.settings.firstClassName).removeClass(this.settings.lastClassName);
       return this.$elements.removeData(pluginName);
-    },
-    then: function then(elements, options) {
-      var deferred = $.Deferred(),
-          that = this;
+    }
+  }, {
+    key: "then",
+    value: function then(elements, options) {
+      var _this3 = this;
+
+      var deferred = $.Deferred();
       options = options || {};
 
       if (this.deferred) {
         this.deferred.promise().then(function () {
-          that.run(elements, options, deferred);
+          _this3.run(elements, options, deferred);
         });
       } else {
         this.run(elements, options, deferred);
@@ -329,65 +357,59 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       this.deferred = deferred;
       return this;
     }
-  };
+  }]);
 
-  $.fn[pluginName] = function (arg1, arg2, arg3) {
-    var rowHeight,
-        $elements = this,
-        options,
-        children,
-        _isOptions = function _isOptions(obj) {
-      return _typeof(obj) === 'object' && (obj.nodeType === undefined || obj.nodeType !== 1) && obj instanceof jQuery === false;
-    };
+  return RowHeight;
+}();
 
-    if (!this.data(pluginName)) {
-      if ($[pluginName][arg1]) {
-        if (arg2 && arg3) {
+$.fn[pluginName] = function (arg1, arg2, arg3) {
+  var $elements = this;
+  var thisPlugin, options, children;
+
+  if (!this.data(pluginName)) {
+    if ($[pluginName][arg1]) {
+      // $('elements').thisPlugin( 'align', '>li', {'firstClassName': 'foo'} );
+      if (arg2 && arg3) {
+        children = arg2;
+        options = arg3;
+      } else if (arg2) {
+        // $('elements').thisPlugin( 'align', { 'firstClassName': 'foo'} );
+        if (_isOptions(arg2)) {
+          options = arg2; // $('elements').thisPlugin( 'align', '>li' );
+        } else {
           children = arg2;
-          options = arg3;
-        } else if (arg2) {
-          if (_isOptions(arg2)) {
-            options = arg2;
-          } else {
-            children = arg2;
-          }
-        }
-      } else {
-        if (arg1 && arg2) {
-          children = arg1;
-          options = arg2;
-        } else if (arg1) {
-          if (_isOptions(arg1)) {
-            options = arg1;
-          } else {
-            children = arg1;
-          }
         }
       }
-
-      this.data(pluginName, _inherit($[pluginName]).init($elements, children, options));
+    } else {
+      // $('elements').thisPlugin( '>li', {'firstClassName': 'foo'} );
+      if (arg1 && arg2) {
+        children = arg1;
+        options = arg2;
+      } else if (arg1) {
+        // $('elements').thisPlugin( {'firstClassName': 'foo'} );
+        if (_isOptions(arg1)) {
+          options = arg1; // $('elements').thisPlugin( '>li' );
+        } else {
+          children = arg1;
+        }
+      }
     }
 
-    rowHeight = this.data(pluginName);
-
-    if (rowHeight[arg1]) {
-      return rowHeight[arg1].apply(rowHeight, Array.prototype.slice.call(arguments, 1));
-    }
-
-    return this;
-  };
-
-  function _inherit(o) {
-    if (Object.create) {
-      return Object.create(o);
-    }
-
-    var F = function F() {};
-
-    F.prototype = o;
-    return new F();
+    this.data(pluginName, new $[pluginName]().init($elements, children, options));
   }
-})((typeof window !== "undefined" ? window['jQuery'] : typeof global !== "undefined" ? global['jQuery'] : null), window);
+
+  thisPlugin = this.data(pluginName);
+
+  if (typeof arg1 === 'string' && thisPlugin[arg1]) {
+    return thisPlugin[arg1].apply(thisPlugin, Array.prototype.slice.call(arguments, 1));
+  }
+
+  return this;
+
+  function _isOptions(obj) {
+    return _typeof(obj) === 'object' && (obj.nodeType === undefined || obj.nodeType !== 1) && obj instanceof _jquery["default"] === false;
+  }
+};
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
