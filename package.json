@@ -4,25 +4,66 @@
   "description": "",
   "main": "jquery.row_height.js",
   "scripts": {
-    "gulp": "gulp",
-    "lr": "gulp --gulpfile gulp_livereload.js"
+    "dev": "cross-env NODE_ENV=development WATCH_ENV=1 SERVE_ENV=1 DIFF_ENV=1 gulp",
+    "one": "cross-env NODE_ENV=development WATCH_ENV=0 SERVE_ENV=0 DIFF_ENV=0 gulp",
+    "prod": "cross-env NODE_ENV=production WATCH_ENV=0 SERVE_ENV=1 DIFF_ENV=0 gulp",
+    "pug_tmp_engine": "node ./gulpkit.js/pug_tmp_engine/index.js & npm run dev html_pug"
   },
   "private": true,
   "author": "https://github.com/NNobutoshi",
   "license": "MIT",
+  "type": "module",
   "repository": {
     "type": "git"
   },
+  "browserslist": [
+    "last 2 versions",
+    "ie 11",
+    "ios >= 9"
+  ],
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-concat": "^2.6.1",
-    "gulp-if": "^2.0.2",
-    "gulp-plumber": "^1.1.0",
-    "gulp-sourcemaps": "^2.6.0",
-    "jquery-smooth-scroll": "^2.2.0"
+    "@babel/core": "*",
+    "@babel/preset-env": "*",
+    "autoprefixer": "*",
+    "babel-loader": "*",
+    "browser-sync": "*",
+    "chalk": "*",
+    "cross-env": "*",
+    "css-mqpacker": "*",
+    "del": "*",
+    "eslint": "*",
+    "eslint-config-jquery": "*",
+    "fancy-log": "*",
+    "gulp": "*",
+    "gulp-eslint": "*",
+    "gulp-if": "*",
+    "gulp-plumber": "*",
+    "gulp-postcss": "*",
+    "gulp-sass": "*",
+    "gulp-sourcemaps": "*",
+    "image-size": "^1.0.2",
+    "js-beautify": "*",
+    "mkdirp": "*",
+    "postcss": "*",
+    "pug": "*",
+    "sass": "*",
+    "stylelint": "*",
+    "stylelint-config-recommended": "*",
+    "stylelint-config-recommended-scss": "*",
+    "stylelint-scss": "*",
+    "terser-webpack-plugin": "*",
+    "through2": "*",
+    "webpack": "*",
+    "webpack-cli": "*",
+    "xlsx": "*"
   },
-  "optionalDependencies": {
-    "browser-sync": "^2.18.13"
+  "volta": {
+    "node": "16.13.0",
+    "npm": "8.1.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "core-js": "*",
+    "jquery": "^3.7.0",
+    "lodash": "*"
+  }
 }

@@ -1,0 +1,69 @@
+@font-face {
+  font-family: "icons";
+  src: url("../fonts/icons.eot");
+  src: url("../fonts/icons.eot?#iefix") format("eot"),
+    url("../fonts/icons.woff2") format("woff2"),
+    url("../fonts/icons.woff") format("woff"),
+    url("../fonts/icons.ttf") format("truetype"),
+  // url("../fonts/icons.svg#icons") format("svg");
+}
+
+@mixin icon-styles {
+  // stylelint-disable-next-line
+  font-family: "icons";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  // speak: none; // only necessary if not using the private unicode range (firstGlyph option)
+  text-decoration: none;
+  text-transform: none;
+}
+
+%icon {
+  @include icon-styles;
+}
+
+@function icon-char($filename) {
+  $char: "";
+  
+  @if $filename == arrow_down {
+    $char: "\F001";
+  }
+  @if $filename == arrow_left {
+    $char: "\F002";
+  }
+  @if $filename == arrow_right {
+    $char: "\F003";
+  }
+  @if $filename == arrow_up {
+    $char: "\F004";
+  }
+
+  @return $char;
+}
+
+@mixin icon($filename, $insert: before, $extend: true) {
+  &:#{$insert} {
+    @if $extend {
+      @extend %icon;
+    } @else {
+      @include icon-styles;
+    }
+    content: icon-char($filename);
+  }
+}
+
+.icon-arrow_down {
+  @include icon(arrow_down);
+}
+.icon-arrow_left {
+  @include icon(arrow_left);
+}
+.icon-arrow_right {
+  @include icon(arrow_right);
+}
+.icon-arrow_up {
+  @include icon(arrow_up);
+}

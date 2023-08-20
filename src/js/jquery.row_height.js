@@ -1,113 +1,11 @@
 /*!
-* jQuery.resize_events
-* version : 1.0.2
-* link    : https://github.com/NNobutoshi/resize_events/
-* License : MIT
-*/
-
-/*! elementresize  */
-( function( $, window ) {
-  var
-    eventName  = 'elementresize'
-    ,interval  = 200
-  ;
-  $.event.special[ eventName ] = {
-    setup : function() {
-      var
-        $this = $( this )
-      ;
-      $this.data( eventName, {
-        width   : $this.width()
-        ,height : $this.height()
-        ,timer  : window.setInterval( function() {
-          var
-            data    = $this.data( eventName )
-            ,width  = $this.width()
-            ,height = $this.height()
-          ;
-          if (
-            data.width  !== width || data.height !== height
-          ) {
-            data.width  = width;
-            data.height = height;
-            $this.triggerHandler( eventName );
-          }
-        }, interval )
-      } );
-    }
-    ,teardown : function(){
-      var
-        $this = $( this )
-      ;
-      window.clearInterval( $this.data( eventName ).timer );
-      $this.removeData( eventName );
-    }
-  };
-
-  $.fn[eventName] = function( data, fn ) {
-    return arguments.length > 0
-      ? this.bind( eventName, data, fn )
-      : this.trigger( eventName )
-    ;
-  };
-
-} )( jQuery, window );
-
-/*! fontresize  */
-( function( $ ) {
-  var
-    className    = 'js-checker'
-    ,eventName   = 'fontresize'
-    ,triggerName = 'elementresize'
-  ;
-
-  $.event.special[eventName] = {
-
-    setup: function(){
-      var
-        $this    = $(this)
-        ,$checker = $('<ins class="'+ className +'">&nbsp;</ins>')
-          .css( {
-            display   : 'block'
-            ,left     : '-9999px'
-            ,position : 'absolute'
-          } )
-          .prependTo( ( $.isWindow( this ) )? 'body': this )
-          .bind( triggerName, function() {
-            $this.trigger( eventName );
-          } )
-      ;
-
-      $this.data( eventName, $checker );
-    }
-    ,teardown : function() {
-      var
-        $this = $(this)
-      ;
-
-      $this
-        .data( eventName )
-        .unbind( triggerName, function() {
-          $this.trigger( eventName );
-        } )
-        .remove()
-      ;
-    }
-  };
-  $.fn[eventName] = function( data, fn ){
-    return arguments.length > 0
-      ? this.bind( eventName, data, fn )
-      : this.trigger( eventName )
-    ;
-  };
-
-} )( jQuery );
-/*!
 * jQuery.row_height
 * version : 3.1.0
 * link    : https://github.com/NNobutoshi/row_height/
 * License : MIT
 */
+
+import jQuery from 'jquery';
 
 ( function( $, window, undefined ) {
   'use strict';
@@ -142,7 +40,7 @@
       if ( settings.bindType ) {
         this.handler = function() {
           clearTimeout( that.timeoutId );
-          that.timeoutId = setTimeout( function(){
+          that.timeoutId = setTimeout( function() {
             that.run( $elements, settings );
           }, settings.delay );
         };
@@ -181,15 +79,15 @@
       ;
       if ( settings.forEachRow === true ) {
         paired$ = this.getRow( $elements );
-        $elements = paired$[0];
-        $ends  = paired$[1];
+        $elements = paired$[ 0 ];
+        $ends  = paired$[ 1 ];
       }
       $elements
         .css( settings.cssProp, '' )
         .each( function( index ) {
           var
             $this    = $( this )
-            ,boxType = $this.css('boxSizing')
+            ,boxType = $this.css( 'boxSizing' )
           ;
           if ( boxType === 'border-box' ) {
             heights[ heights.length ] = $this.outerHeight();
@@ -237,13 +135,13 @@
       $elements
         .each( function( index ) {
           var
-            $this         = $(this)
+            $this         = $( this )
             ,thisOffsetTop = $this.offset().top
           ;
           if ( index === 0 ) {
             firstOffsetTop = thisOffsetTop;
           }
-          if ( firstOffsetTop === thisOffsetTop ){
+          if ( firstOffsetTop === thisOffsetTop ) {
             if ( !$firstRowGroup ) {
               $firstRowGroup = $this;
             } else {
@@ -256,7 +154,7 @@
               $.merge( $ends, $this );
             }
           }
-        })
+        } )
       ;
       return [ $firstRowGroup, $ends ];
     }
@@ -307,7 +205,9 @@
       ,options
       ,children
       ,_isOptions = function( obj ) {
-        return typeof obj === 'object' && ( obj.nodeType === undefined || obj.nodeType !== 1 ) && obj instanceof jQuery === false;
+        return typeof obj === 'object' &&
+        ( obj.nodeType === undefined || obj.nodeType !== 1 ) &&
+        obj instanceof jQuery === false;
       }
     ;
     if ( !this.data( pluginName ) ) {
@@ -351,63 +251,3 @@
     return new F();
   }
 } )( jQuery, window );
-( function( $ ) {
-  var
-    options1 = {
-      bindType        : 'elementresize fontresize'
-      ,firstClassName : 'js-first'
-      ,lastClassName  : 'js-last'
-    }
-    ,options2 = {
-      firstClassName : 'js-first'
-      ,lastClassName : 'js-last'
-      ,bindType      : 'elementresize fontresize'
-      ,onComplete    : function() {
-        $.rowHeight
-          .then( '#list2>li>div' )
-          .then( '#list2>li>div>div' )
-          .then( '#list2>li>div' )
-          .then( '#list2>li' )
-        ;
-      }
-    }
-    ,options3 = {
-      bindType : 'elementresize fontresize'
-      ,onComplete : function() {
-        $.rowHeight
-          .then( '#list3>li>div' )
-          .then( '#list3>li' )
-        ;
-      }
-    }
-    ,$list1 = $('#list1>li').rowHeight( options1 )
-    ,$list2 = $('#list2').rowHeight( '>li', options2 )
-    ,$list3 = $('#list3').rowHeight( '>li', options3 )
-  ;
-  $('#list1_i').on( 'click', function() {
-    $list1.rowHeight( options1 );
-    return false;
-  });
-  $('#list1_d').on( 'click', function() {
-    $list1.rowHeight('destroy');
-    return false;
-  });
-  $('#list2_i').on( 'click', function() {
-    $list2.rowHeight( '>li', options2 );
-    return false;
-  });
-  $('#list2_d').on( 'click', function() {
-    $list2.rowHeight('destroy').find('div').css( 'height', '' );
-    return false;
-  });
-  $('#list3_i').on( 'click', function() {
-    $list3.rowHeight( '>li>div', options3 );
-    return false;
-  });
-  $('#list3_d').on( 'click', function() {
-    $list3.rowHeight('destroy');
-    return false;
-  });
-
-} )( jQuery );
-//# sourceMappingURL=index.js.map

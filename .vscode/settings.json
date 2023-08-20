@@ -1,0 +1,19 @@
+{
+    "editor.renderControlCharacters": true,
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true,
+      "source.fixAll.stylelint": true,
+    },
+    "eslint.format.enable": true,
+    "eslint.packageManager": "npm",
+    "eslint.workingDirectories": ["./"],
+    "eslint.validate": [
+      "javascript"
+    ],
+    "path-autocomplete.pathMappings": {
+      "$root": ["${folder}/src"] // the root is now relative to both p1/src and p2/src
+    },
+    "stylelint.validate": ["css", "scss"],
+    "scss.validate": false
+}

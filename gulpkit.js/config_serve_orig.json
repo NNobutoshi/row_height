@@ -1,0 +1,12 @@
+{
+ "conf_dev" : {
+    "enable" : true,
+    "options" : {
+      "port"           : 9039,
+      "browser"        : "Chrome",
+      "reloadThrottle" : 100,
+      "proxy"          : "localhost:8039"
+    }
+  }
+  ,"conf_prod" : {}
+}

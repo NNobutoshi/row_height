@@ -1,0 +1,139 @@
+@charset 'utf-8';
+
+@use "sass:math";
+@use "sass:list";
+@use "sass:map";
+
+@use "variables" as val;
+
+// font size
+@mixin fs( $size: 12, $base: 16 ) {
+  font-size: math.div( $size , $base ) * 1rem;
+}
+
+// line-height
+@mixin lh( $size: 14, $height: 18 ) {
+  line-height: math.div( $height , $size );
+}
+
+// メディアクエリ用
+@mixin mq( $queries... ) {
+  $len: list.length( $queries );
+  $query: "";
+  $width: "";
+  $index: 0;
+  $ruleString: "";
+  @each $item in $queries {
+    $index: $index + 1;
+    @if ( $index % 3 == 1 ) {
+      $query: $item;
+      $ruleString: "#{$ruleString} ( #{$item}: ";
+    }
+    @if ( $index % 3 == 2 ) {
+      $width: map.get( val.$break-points, $item );
+      @if ( not $width ) {
+        $width: $item;
+      }
+      @if ( str-index( $query, "max" ) ) {
+        $width: $width - 1px;
+      }
+      $ruleString: "#{$ruleString}" + "#{$width} )";
+    }
+    @if ( $index % 3 == 0 ) {
+      $ruleString: "#{$ruleString}" + " #{$item}";
+    }
+  }
+  // stylelint-disable-next-line media-query-no-invalid
+  @media #{$ruleString} {
+    @content;
+  }
+}
+
+@mixin each_in_queries() {
+  $keys : map.keys( val.$break-points );
+  $len : list.length( $keys );
+  $index: 1;
+  $next_key: "";
+  & {
+    @content;
+  }
+  @each $key in $keys {
+    @if ( $len > $index ) {
+      $next_key : list.nth( $keys, $index + 1 );
+    }
+    @include mq( max-width, $key ){
+      &--#{$key} {
+        @content;
+      }
+    }
+    @include mq( min-width, $key ){
+      &--#{$key}- {
+        @content;
+      }
+    }
+    @if ( $len > $index ) {
+      @for $index_sub from $index + 1 through $len {
+        $sub_key : list.nth( $keys, $index_sub );
+        &--#{$key}-#{$sub_key} {
+          @include mq( min-width, $key, and, max-width, $sub_key ){
+            @content;
+          }
+        }
+      }
+    }
+    $index: $index + 1;
+  }
+}
+
+@mixin columns() {
+  @for $i from 1 through 12 {
+    @for $ii from 1 through $i {
+      @include column_width( $ii, $i );
+    }
+  }
+}
+
+@mixin column_width( $num:1, $base:1 ) {
+  @include each_in_queries() {
+    width: math.div( $num , $base ) * 100%;
+  }
+}
+
+// link style
+@mixin anc(
+  $link:     $a-default,
+  $visited:  $a-visited,
+  $hover:    $a-hover,
+  $active:   $a-active,
+  // $focus: $a-focus,
+  $deco-l:   none,
+  $deco-v:   none,
+  $deco-h:   underline,
+  $deco-a:   underline
+  // $deco-f: underline
+) {
+  &:link {
+    color: $link;
+    text-decoration: $deco-l;
+  }
+  &:visited {
+    color: $visited;
+    text-decoration: $deco-v;
+  }
+  &:hover {
+    color: $hover;
+    text-decoration: $deco-h;
+  }
+  &:visited:hover {
+    color: $hover;
+    text-decoration: $deco-h;
+  }
+  &:active {
+    color: $active;
+    text-decoration: $deco-a;
+  }
+  &:focus {
+    color: $link;
+    text-decoration: $deco-l;
+  }
+}

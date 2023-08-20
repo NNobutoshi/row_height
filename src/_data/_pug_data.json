@@ -1,0 +1,30 @@
+{
+  "defaults" : {
+    "lang"         : "ja",
+    "viewport"     : "width=device-width, initial-scale=1",
+    "siteName"     : "starter kit",
+    "description"  : "ディスクリプション",
+    "keywords"     : "キーワード",
+    "ogPrefix"     : "og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#",
+    "ogType"       : "article",
+    "ogImg"        : "",
+    "siteUrl"      : "http://localhost",
+    "url"          : "",
+    "title"        : "サイト",
+    "cssCommonDir" : "/css",
+    "jsCommonDir"  : "/js",
+    "favicon"      : "",
+    "icon"         : "/img/chrome-touch-icon-192x192.png",
+    "appleIcon"    : "/img/apple-touch-icon-114x114.png",
+    "foo"          : "foo"
+  },
+  "{{": "",
+  "/example/index.html": {
+    "url": "/example/index.html",
+    "title": "row height",
+    "template": "/_templates/_template.pug",
+    "ogPrefix": "og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# website: http://ogp.me/ns/website#",
+    "ogType": "website"
+  },
+  "}}": ""
+}

@@ -1,0 +1,48 @@
+block config
+  -
+    siteData = self.siteData
+    pageData = self.pageData
+    for ( var item in siteData ) {
+      if ( pageData && !pageData[ item ] ) {
+        pageData[ item ] = siteData[ item ]
+      }
+    }
+    pageData.url = pageData.url.replace( /\/index\.html$/, '/' )
+doctype html
+//- ↓差分ビルドに検知させるためのコメント
+//- include /_data/_pug_data.json
+html(lang=pageData.lang)
+  head(prefix=pageData.ogPrefix)
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content=pageData.viewport)
+    meta(name="format-detection", content="telephone=no")
+    meta(name="description", content=pageData.description)
+    meta(name="keywords", content=pageData.keywords)
+    meta(property="og:type", content=pageData.ogType)
+    meta(property="og:site_name", content=pageData.siteName)
+    meta(property="og:title", content=pageData.title)
+    meta(property="og:description", content=pageData.description)
+    meta(property="og:url", content=pageData.siteUrl+pageData.url)
+    meta(property="og:image", content=pageData.ogImg)
+    meta(name="msapplication-tap-highlight", content="no")
+    meta(name="application-name",content=pageData.siteName)
+    meta(name="apple-mobile-web-app-title", content=pageData.siteName)
+    title #{pageData.title}
+    //- link(rel="shortcut icon", href=pageData.favicon, type="image/vnd.microsoft.icon")
+    //- link(rel="icon", sizes="192x192", href=pageData.icon)
+    //- link(rel="apple-touch-icon-precomposed", type="image/png", sizes="114x114", href=appleIcon)
+    block style
+  body
+    div.sg-page#page
+      include ../_parts/_page_head.pug
+      ///.sg-page_head
+      main.sg-page_body
+        div.sg-page_core.sg-page_core--body
+          block pageBody
+            p foo
+      ///.sg-page_body
+      include ../_parts/_page_foot.pug
+      ///.sg-page_foot
+    ///.page#page
+    block script_body

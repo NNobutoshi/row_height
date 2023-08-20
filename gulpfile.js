@@ -1,94 +1,41 @@
-var
-  fs           = require('fs')
-  ,gulp        = require('gulp')
-  ,concat      = require('gulp-concat')
-  ,plumber     = require('gulp-plumber')
-  ,sourcemap   = require('gulp-sourcemaps')
-  ,gulpIf      = require('gulp-if')
-  ,liveReload  = fs.existsSync('./gulp_livereload.js')? require('./gulp_livereload.js'): null
-  ,dist            = 'example'
-  ,src             = 'src'
-  ,needsSourcemap  = true
-  ,tasks = {
-    'js:concat' : {
-      src : [
-        src  + '/jquery.resize_events.js'
-        ,src + '/jquery.row_height.js'
-        ,src + '/init.js'
-      ]
-      ,watch   : true
-      ,default : false
-    }
-    ,'js:mv' : {
-      src : [
-        src + '/jquery.row_height.js'
-      ]
-      ,watch   : true
-      ,default : true
-    }
-    ,'watch' : {
-      default : true
-    }
+import gulp from 'gulp';
+import * as tasks from './gulpkit.js/tasks/index.js';
+
+const { series } = gulp;
+
+/*
+ * コマンドライン上 Gulp <task>
+ * でタスクを個別に実行する際、watch や server も機能させる。
+ */
+( function _taskOnCommand() {
+  const
+    watchTasks = {}
+    ,args = process.argv.slice( process.argv.indexOf( 'gulpkit.js' ) + 1 )
+  ;
+  if ( args.length === 0 ) {
+    return;
   }
-;
+  args.forEach( ( taskName ) => {
+    watchTasks[ taskName ] = tasks[ taskName ];
+  } );
+  process.on( 'beforeExit', () => {
+    tasks.serve_init( tasks.watcher( watchTasks, tasks.serve_reload ) );
+  } );
+} )();
 
-if( typeof liveReload === 'function' && liveReload.needs === true ) {
-  gulp.task( 'livereload', liveReload );
-  tasks.livereload = {
-    default : true
-  };
-}
 
-gulp.task( 'js:mv', [ 'js:concat' ], function() {
-  return gulp
-    .src( src + '/jquery.row_height.js' )
-    .pipe( gulp.dest( './' ) )
-  ;
-} )
-;
+/*
+ * default
+ */
+export default series(
+  tasks.clean,
+  tasks.html_pug,
+  tasks.css_lint,
+  tasks.css_sass,
+  tasks.js_eslint,
+  tasks.js_webpack,
+  tasks.serve_init,
+  tasks.watcher( tasks, tasks.serve_reload ),
+);
 
-gulp.task( 'js:concat', function() {
-  var
-    self = tasks[ 'js:concat' ]
-    ,flagSourcemap = ( typeof self.needsSourcemap ==='boolean' )? self.needsSourcemap: needsSourcemap
-  ;
-  return gulp
-    .src( self.src )
-    .pipe( plumber() )
-    .pipe( gulpIf(
-      flagSourcemap
-      ,sourcemap.init( { loadMaps : true } )
-    ) )
-    .pipe( concat( 'index.js' ) )
-    .pipe( gulpIf(
-      flagSourcemap
-      ,sourcemap.write( './' )
-    ) )
-    .pipe( gulp.dest( dist + '/js'  ) )
-  ;
-} )
-;
-
-gulp.task( 'watch', _callWatchTasks );
-
-gulp.task( 'default', _filterDefaultTasks() );
-
-function _callWatchTasks() {
-  Object
-    .keys( tasks )
-    .forEach( function( key ) {
-      if ( tasks[ key ].watch && tasks[ key ].watch === true ) {
-        gulp.watch( tasks[ key ].src, [ key ] );
-      }
-    } )
-  ;
-}
-
-function _filterDefaultTasks() {
-  return Object
-    .keys( tasks )
-    .filter( function( key ) {
-      return tasks[ key ].default && tasks[ key ].default === true;
-    } )
-  ;
-}
+export * from './gulpkit.js/tasks/index.js';

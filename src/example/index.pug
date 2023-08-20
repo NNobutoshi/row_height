@@ -1,0 +1,75 @@
+extends /_bases/_layout.pug
+
+append style
+  link(rel="stylesheet", href="./css/index.css")
+
+append script_body
+  script(src="../js/vendor.js")
+  script(src="./js/index.js")
+
+block pageBody
+  div#test
+    p.btnGroup
+      a(href="#")#list1_i.button init
+      a(href="#")#list1_d.button destroy
+    ul#list1
+      |	<li>0<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>1<br>+<br>+<br>+<br></li>
+      |	<li>2<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>3<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>4<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>5<br>+<br>+<br>+<br>+</li>
+      |	<li>6<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>7<br>+<br>+<br>+<br></li>
+      |	<li>8<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+</li>
+      |	<li>9<br>+<br>+<br>+<br></li>
+      |	<li>10<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>11<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>12<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>13<br>+<br>+<br>+<br></li>
+      |	<li>14<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>15<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>16<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>17<br>+<br>+<br>+<br>+</li>
+      |	<li>18<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>19<br>+<br>+<br>+<br></li>
+      |	<li>20<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+</li>
+    p.btnGroup
+      a(href="#")#list2_i.button init
+      a(href="#")#list2_d.button destroy
+    ul#list2
+      |	<li>0<div><div>+</div></div>+<br><div>+<br></div><br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>1<div><div>+<br>+<br></div></div>+<br><div>+<br>+<br></div><br>+<br>+<br>+<br></li>
+      |	<li>2<div>+<br>+<br>+<br></div>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>3<div>+<br>+<br>+<br>+<br></div>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>4<div>+<br>+<br>+<br>+<br>+<br></div>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>5<div>+<br>+<br>+<br>+<br>+<br>+<br></div>+<br>+<br>+<br></li>
+      |	<li>6<div><div>+<br></div></div>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>7<div>+<br>+<br></div>+<br><div>+<br>+<br>+<br></div>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>8<div>+<br>+<br>+<br></div>+<br><div>+<br>+<br>+<br>+<br></div><br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>9<div>+<br>+<br>+<br>+<br></div>+<br><div>+<br>+<br>+<br>+<br>+<br></div><br>+<br>+<br>+<br></li>
+      |	<li>10<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>11<div>+<br></div>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>12<div>+<br>+<br></div>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>13<div><div>+<br>+<br>+<br></div></div>+<br>+<br>+<br></li>
+      |	<li>14<div>+<br>+<br>+<br>+<br></div>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>15<div>+<br>+<br>+<br>+<br>+<br></div>+<br><div>+</div>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>16<div>+</div>+<br><div>+<br>+<br></div><br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>17<div>+<br>+<br></div>+<br><div>+<br>+<br>+<br></div><br>+<br>+<br>+<br></li>
+      |	<li>18<div>+<br>+<br>+<br></div>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>19<div>+<br>+<br>+<br>+<br></div>+<br>+<br>+<br>+<br>+<br>+<br>+<br></li>
+      |	<li>20<div>+<br>+<br>+<br>+<br>+<br></div>+<br>+<br>+<br>+<br>+<br></li>
+    ul#list3
+      li
+        |<div>0<br>+<br>+<br></div>
+        |<div>1<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></div>
+        |<div>2<br>+<br>+<br>+<br>+<br>+<br></div>
+        |<div>3<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></div>
+      li
+        |<div>4<br>+<br>+<br>+</div>
+        |<div>5<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></div>
+      li
+        |<div>6<br>+<br>+<br></div>
+        |<div>7<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></div>
+        |<div>8<br>+<br>+<br>+</div>
+        |<div>9<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br>+<br></div>

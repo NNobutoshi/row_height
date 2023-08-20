@@ -1,0 +1,61 @@
+{
+  "globals": {
+    "$": true
+  },
+  "env": {
+    "es6": true,
+    "browser": true,
+    "node": true
+  },
+  "extends": "jquery",
+  "rules": {
+    "indent": [
+      "error",
+      2
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "comma-spacing": [
+      "off"
+    ],
+    "comma-style": [
+      "off"
+    ],
+    "key-spacing": [
+      "off"
+    ],
+    "comma-dangle": [
+      "off"
+    ],
+    "no-unused-vars": [
+      "error",
+      {
+        "args":  "all",
+        "argsIgnorePattern": "^_|^e|^index"
+      }
+    ],
+    "camelcase": [
+      "off"
+    ],
+    "lines-around-comment": [
+      "error",
+      {
+        "beforeLineComment": false
+      }
+    ]
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  }
+}

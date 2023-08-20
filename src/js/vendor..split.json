@@ -1,0 +1,10 @@
+{
+  "common_units_body" : {
+    "test"    : [
+      "/node_modules/jquery/"
+    ],
+    "name"    : "./js/vendor",
+    "chunks"  : "initial",
+    "enforce" : true
+  }
+}
