@@ -22,10 +22,7 @@
     "ios >= 12"
   ],
   "devDependencies": {
-    "@babel/core": "*",
-    "@babel/preset-env": "*",
     "autoprefixer": "*",
-    "babel-loader": "*",
     "browser-sync": "*",
     "chalk": "*",
     "cross-env": "*",
@@ -62,7 +59,6 @@
     "npm": "8.1.0"
   },
   "dependencies": {
-    "core-js": "*",
     "jquery": "^3.7.0",
     "lodash": "*"
   }

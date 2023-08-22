@@ -6,7 +6,6 @@
 */
 
 import jQuery from 'jquery';
-
 ( function( $, window, undefined ) {
   'use strict';
   var
