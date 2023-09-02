@@ -351,8 +351,10 @@ body, html {
 }
 
 #test {
-  zoom: 1;
   overflow: hidden;
+  width: 80%;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 #test ul {
@@ -368,7 +370,8 @@ body, html {
   list-style: none;
   float: left;
   margin-top: 20px;
-  margin-right: 20px;
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 #test li div {

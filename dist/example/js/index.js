@@ -27,7 +27,8 @@ __webpack_require__.r(__webpack_exports__);
     ,options2 = {
       firstClassName : 'js-first'
       ,lastClassName : 'js-last'
-      ,bindType      : 'elementresize fontresize'
+      // ,bindType : 'elementresize fontresize'
+      ,bindType : 'elementresize'
       ,onComplete    : function() {
         $.rowHeight
           .then( '#list2>li>div' )
@@ -46,34 +47,50 @@ __webpack_require__.r(__webpack_exports__);
         ;
       }
     }
-    ,$list1 = $( '#list1>li' ).rowHeight( options1 )
-    ,$list2 = $( '#list2' ).rowHeight( '>li', options2 )
-    ,$list3 = $( '#list3' ).rowHeight( '>li', options3 )
+    ,$list1 = $( '#list1>li' )
+    ,$list2 = $( '#list2>li,#list2>li>div,#list2>li>div>div' )
+    // ,$list2 = $( '#list2>li' )
+    ,$list3 = $( '#list3>li, #list3>li>div' )
   ;
-  $( '#list1_i' ).on( 'click', function() {
-    $list1.rowHeight( options1 );
-    return false;
-  } );
-  $( '#list1_d' ).on( 'click', function() {
-    $list1.rowHeight( 'destroy' );
-    return false;
-  } );
-  $( '#list2_i' ).on( 'click', function() {
-    $list2.rowHeight( '>li', options2 );
-    return false;
-  } );
-  $( '#list2_d' ).on( 'click', function() {
-    $list2.rowHeight( 'destroy' ).find( 'div' ).css( 'height', '' );
-    return false;
-  } );
-  $( '#list3_i' ).on( 'click', function() {
-    $list3.rowHeight( '>li>div', options3 );
-    return false;
-  } );
-  $( '#list3_d' ).on( 'click', function() {
-    $list3.rowHeight( 'destroy' );
-    return false;
-  } );
+  $( '#list1_i' )
+    .on( 'click', function() {
+      $list1.rowHeight( options1 );
+      return false;
+    } )
+    .trigger( 'click' )
+  ;
+  $( '#list1_d' )
+    .on( 'click', function() {
+      $list1.rowHeight( 'destroy' );
+      return false;
+    } )
+  ;
+  $( '#list2_i' )
+    .on( 'click', function() {
+      $list2.rowHeight( options2 );
+      return false;
+    } )
+    .trigger( 'click' )
+  ;
+  $( '#list2_d' )
+    .on( 'click', function() {
+      $list2.rowHeight( 'destroy' ).find( 'div' ).css( 'height', '' );
+      return false;
+    } )
+  ;
+  $( '#list3_i' )
+    .on( 'click', function() {
+      $list3.rowHeight( options3 );
+      return false;
+    } )
+    .trigger( 'click' )
+  ;
+  $( '#list3_d' )
+    .on( 'click', function() {
+      $list3.rowHeight( 'destroy' ).find( 'div' ).css( 'height', '' );
+      return false;
+    } )
+  ;
 
 } )( jquery__WEBPACK_IMPORTED_MODULE_0__ );
 
@@ -220,9 +237,9 @@ __webpack_require__.r(__webpack_exports__);
     pluginName = 'rowHeight'
   ;
   $[ pluginName ] = {
-    $elements  : null
+    $elemTargets  : null
     ,timeoutId : null
-    ,handler   : null
+    ,handle    : null
     ,settings  : {
       firstClassName  : ''
       ,lastClassName  : ''
@@ -234,50 +251,135 @@ __webpack_require__.r(__webpack_exports__);
       ,bindObj        : window
       ,forEachRow     : true
     }
-    ,init : function( $elements, children, options ) {
-      var
-        that = this
-        ,settings
-      ;
-      settings = this.settings = $.extend( {}, this.settings, options );
-      this.$elements = $elements;
+    ,init : function( $elemTargets, children, options ) {
+      var settings = this.settings = $.extend( {}, this.settings, options );
+      var that = this;
       if ( children ) {
-        $elements = this.$children = $elements.find( children );
+        $elemTargets = $elemTargets.find( children );
       }
+      this.$elemTargets = $elemTargets;
+      this.handle = function() {
+        clearTimeout( that.timeoutId );
+        that.timeoutId = setTimeout( function() {
+          that.run( that.$elemTargets, that.settings );
+        }, that.settings.delay );
+      };
       if ( settings.bindType ) {
-        this.handler = function() {
-          clearTimeout( that.timeoutId );
-          that.timeoutId = setTimeout( function() {
-            that.run( $elements, settings );
-          }, settings.delay );
-        };
         $( settings.bindObj )
-          .on( settings.bindType, this.handler )
+          .on( settings.bindType, this.handle )
         ;
       }
-      that.run( $elements, settings );
+      // this.run( $elemTargets, options );
+      this.setDataOfDepth();
+      this.setMaxHeigthOnRow( this.$elemTargets );
       return this;
+    }
+    ,setMaxHeigthOnRow: function( $elements ) {
+      var
+        heightData = []
+        ,settings = this.settings
+      ;
+      $elements = this.get1stTargetRow( $elements );
+      $elements
+        .css( settings.cssProp, '' )
+        .each( function( index ) {
+          var
+            $this    = $( this )
+            ,boxType = $this.css( 'boxSizing' )
+          ;
+          if ( boxType === 'border-box' ) {
+            heightData[ heightData.length ] = $this.outerHeight();
+          } else {
+            heightData[ heightData.length ] = $this.height();
+          }
+          if ( settings.firstClassName ) {
+            if ( index === 0 ) {
+              $this.addClass( settings.firstClassName );
+            } else {
+              $this.removeClass( settings.firstClassName );
+            }
+          }
+          if ( settings.lastClassName ) {
+            if ( index === $elements.length - 1 ) {
+              $this.addClass( settings.lastClassName );
+            } else {
+              $this.removeClass( settings.lastClassName );
+            }
+          }
+        } )
+        .css( settings.cssProp, Math.max.apply( null, heightData ) + 'px' )
+        .css( 'border','solid 3px #f0f' )
+      ;
+    }
+    ,get1stTargetRow: function() {
+      var $rowGroup = $();
+      _getRowGroup( this.$elemTargets );
+      return $rowGroup;
+      function _getRowGroup( $elemTargets ) {
+        var
+          minPosY = Infinity
+          ,hasChildInLine = false
+          ,maxDepth = -1
+        ;
+        $elemTargets
+          .each( function( index ,elem ) {
+            var
+              $elem = $( elem )
+              ,posY = $elem.position().top
+              ,depth = parseInt( $elem.attr( 'data-rowheight-depth' ) )
+            ;
+            if ( posY < minPosY || ( posY === minPosY && depth > maxDepth ) ) {
+              hasChildInLine = false;
+              maxDepth = depth;
+              minPosY = posY;
+              $rowGroup = $();
+            }
+            if ( posY === minPosY && maxDepth === depth ) {
+              $rowGroup = $.merge( $rowGroup, $elem );
+              if ( $elem.children( '[data-rowheight-depth]' ).length > 0 ) {
+                hasChildInLine = true;
+              }
+            }
+          } );
+        if ( hasChildInLine === true ) {
+          _getRowGroup( $elemTargets.not( $rowGroup ) );
+        }
+      }
+    }
+    ,setDataOfDepth : function() {
+      var that = this;
+      this.$elemTargets
+        .each( function( index , elem ) {
+          $( elem ).attr( 'data-rowheight-depth', 'null' );
+        } )
+        .each( function( index, elem ) {
+          var len = $( elem ).parents( '[data-rowheight-depth]' ).length;
+          $( elem ).attr( 'data-rowheight-depth', len );
+          if ( len > that.maxDepth ) {
+            that.maxDepth = len;
+          }
+        } );
     }
     ,run : function( elements, options, deferred ) {
       var
         settings
-        ,$elements
+        ,$elemTargets
       ;
       if ( elements instanceof jquery__WEBPACK_IMPORTED_MODULE_0__ ) {
-        $elements = elements;
+        $elemTargets = elements;
       } else if ( elements ) {
-        $elements = $( elements );
+        $elemTargets = $( elements );
       }
       settings = $.extend( {}, this.settings, options );
-      if ( $.isFunction( settings.onBefore ) ) {
+      if ( typeof settings.onBefore === 'function' ) {
         settings.onBefore();
       }
-      if ( $elements ) {
-        this.align( $elements, settings, deferred );
+      if ( $elemTargets ) {
+        this.align( $elemTargets, settings, deferred );
       }
       return this;
     }
-    ,align : function( $elements , settings, deferred ) {
+    ,align : function( $elemTargets , settings, deferred ) {
       var
         that     = this
         ,heights = []
@@ -285,11 +387,11 @@ __webpack_require__.r(__webpack_exports__);
         ,$ends
       ;
       if ( settings.forEachRow === true ) {
-        paired$ = this.getRow( $elements );
-        $elements = paired$[ 0 ];
+        paired$ = this.getRow( $elemTargets );
+        $elemTargets = paired$[ 0 ];
         $ends  = paired$[ 1 ];
       }
-      $elements
+      $elemTargets
         .css( settings.cssProp, '' )
         .each( function( index ) {
           var
@@ -309,7 +411,7 @@ __webpack_require__.r(__webpack_exports__);
             }
           }
           if ( settings.lastClassName ) {
-            if ( index === $elements.length - 1 ) {
+            if ( index === $elemTargets.length - 1 ) {
               $this.addClass( settings.lastClassName );
             } else {
               $this.removeClass( settings.lastClassName );
@@ -327,19 +429,19 @@ __webpack_require__.r(__webpack_exports__);
             deferred.resolve();
             delete that.deferred;
           }
-          if ( $.isFunction( settings.onComplete ) ) {
+          if ( typeof settings.onComplete === 'function' ) {
             settings.onComplete();
           }
         }
       }, 1 );
     }
-    ,getRow : function( $elements ) {
+    ,getRow : function( $elemTargets ) {
       var
         firstOffsetTop
         ,$firstRowGroup
         ,$ends
       ;
-      $elements
+      $elemTargets
         .each( function( index ) {
           var
             $this         = $( this )
@@ -366,25 +468,26 @@ __webpack_require__.r(__webpack_exports__);
       return [ $firstRowGroup, $ends ];
     }
     ,destroy : function() {
-      var $elements;
+      console.info( 'click destrory' );
+      var $elemTargets;
       clearTimeout( this.timeoutId );
       this.timeoutId = null;
       if ( this.settings.bindType ) {
-        $( this.settings.bindObj ).off( this.settings.bindType, this.handler );
+        $( this.settings.bindObj ).off( this.settings.bindType, this.handle );
       }
       delete this.deferred;
       if ( this.$children ) {
-        $elements = this.$children;
+        $elemTargets = this.$children;
       } else {
-        $elements = this.$elements;
+        $elemTargets = this.$elemTargets;
       }
-      $elements
+      $elemTargets
         .css( this.settings.cssProp, '' )
         .removeClass( this.settings.firstClassName )
         .removeClass( this.settings.lastClassName )
       ;
       return this
-        .$elements
+        .$elemTargets
         .removeData( pluginName )
       ;
     }
@@ -408,14 +511,9 @@ __webpack_require__.r(__webpack_exports__);
   $.fn[ pluginName ] = function( arg1, arg2, arg3 ) {
     var
       rowHeight
-      ,$elements = this
+      ,$elemTargets = this
       ,options
       ,children
-      ,_isOptions = function( obj ) {
-        return typeof obj === 'object' &&
-        ( obj.nodeType === undefined || obj.nodeType !== 1 ) &&
-        obj instanceof jquery__WEBPACK_IMPORTED_MODULE_0__ === false;
-      }
     ;
     if ( !this.data( pluginName ) ) {
       if ( $[ pluginName ][ arg1 ] ) {
@@ -441,13 +539,18 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       }
-      this.data( pluginName, _inherit( $[ pluginName ] ).init( $elements, children, options ) );
+      this.data( pluginName, _inherit( $[ pluginName ] ).init( $elemTargets, children, options ) );
     }
     rowHeight = this.data( pluginName );
     if ( rowHeight[ arg1 ] ) {
       return rowHeight[ arg1 ].apply( rowHeight, Array.prototype.slice.call( arguments, 1 ) );
     }
     return this;
+    function _isOptions( obj ) {
+      return typeof obj === 'object' &&
+        ( obj.nodeType === undefined || obj.nodeType !== 1 ) &&
+        obj instanceof jquery__WEBPACK_IMPORTED_MODULE_0__ === false;
+    }
   };
   function _inherit( o ) {
     if ( Object.create ) {
