@@ -8,8 +8,14 @@ body,html {
 	margin:0;
 	padding:0;
 }
+.list {
+  &:after {
+    content:'';
+    display: block;
+    clear:both;
+  }
+}
 #test {
-	overflow:hidden;
   width: 80%;
   margin-right: auto;
   margin-left: auto;
@@ -36,7 +42,34 @@ body,html {
 	background: #f99;
 }
 #list1 li {
+  position: relative;
 	box-sizing: border-box;
+  &.js-first-element {
+    &::before {
+      z-index: 1;
+      position: absolute;
+      content: "first";
+      background-color: #f00;
+      color: #fff;
+      top:-10px;
+      left: -20px;
+      padding: 2px 10px;
+      transform: rotate( -45deg )
+    }
+  }
+  &.js-last-element {
+    &::after {
+      z-index: 1;
+      position: absolute;
+      content: "last";
+      background-color: #f0f;
+      color: #fff;
+      bottom:-10px;
+      right: -20px;
+      padding: 2px 10px;
+      transform: rotate( -45deg )
+    }
+  }
 }
 #list3>li {
 	width: 100px;
@@ -47,6 +80,9 @@ body,html {
 .btnGroup {
 	clear: both;
 	padding-top: 1em;
+  ul+& {
+    margin-top: 100px;
+  }
 }
 .btnGroup a {
 	margin-left: 1em;

@@ -7,36 +7,25 @@ import '../../js/jquery.resize_events.js';
   var
     options1 = {
       bindType        : 'elementresize fontresize'
-      ,firstClassName : 'js-first'
-      ,lastClassName  : 'js-last'
+      ,firstClassName : 'js-first-element'
+      ,lastClassName  : 'js-last-element'
     }
     ,options2 = {
-      firstClassName : 'js-first'
-      ,lastClassName : 'js-last'
-      // ,bindType : 'elementresize fontresize'
-      ,bindType : 'elementresize'
-      ,onComplete    : function() {
-        $.rowHeight
-          .then( '#list2>li>div' )
-          .then( '#list2>li>div>div' )
-          .then( '#list2>li>div' )
-          .then( '#list2>li' )
-        ;
-      }
+      firstClassName : 'js-firstelement'
+      ,lastClassName : 'js-last-element'
+      ,bindType : 'elementresize fontresize'
     }
     ,options3 = {
       bindType : 'elementresize fontresize'
-      ,onComplete : function() {
-        $.rowHeight
-          .then( '#list3>li>div' )
-          .then( '#list3>li' )
-        ;
+      ,firstClassName : 'js-first-element'
+      ,lastClassName : 'js-last-element'
+      ,onComplete : function( $base ) {
+        $base.css( 'border', 'solid 3px #f0f' );
       }
     }
     ,$list1 = $( '#list1>li' )
-    ,$list2 = $( '#list2>li,#list2>li>div,#list2>li>div>div' )
-    // ,$list2 = $( '#list2>li' )
-    ,$list3 = $( '#list3>li, #list3>li>div' )
+    ,$list2 = $( '#list2' )
+    ,$list3 = $( '#list3' )
   ;
   $( '#list1_i' )
     .on( 'click', function() {
@@ -53,27 +42,28 @@ import '../../js/jquery.resize_events.js';
   ;
   $( '#list2_i' )
     .on( 'click', function() {
-      $list2.rowHeight( options2 );
+      $list2.rowHeight( '>li,>li>div,>li>div>div', options2 );
       return false;
     } )
     .trigger( 'click' )
   ;
   $( '#list2_d' )
     .on( 'click', function() {
-      $list2.rowHeight( 'destroy' ).find( 'div' ).css( 'height', '' );
+      $list2.rowHeight( 'destroy' );
       return false;
     } )
   ;
   $( '#list3_i' )
     .on( 'click', function() {
-      $list3.rowHeight( options3 );
+      $list3.rowHeight( '>li,>li>div', options3 );
       return false;
     } )
     .trigger( 'click' )
   ;
   $( '#list3_d' )
     .on( 'click', function() {
-      $list3.rowHeight( 'destroy' ).find( 'div' ).css( 'height', '' );
+      $list3.rowHeight( 'destroy' );
+      $list3.css( 'border', '' );
       return false;
     } )
   ;

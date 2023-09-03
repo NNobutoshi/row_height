@@ -48,7 +48,7 @@ import jQuery from 'jquery';
 
   $.fn[ eventName ] = function( data, fn ) {
     return arguments.length > 0 ?
-      this.bind( eventName, data, fn ) :
+      this.on( eventName, data, fn ) :
       this.trigger( eventName )
     ;
   };
@@ -75,7 +75,7 @@ import jQuery from 'jquery';
             ,position : 'absolute'
           } )
           .prependTo( ( $.isWindow( this ) ) ? 'body' : this )
-          .bind( triggerName, function() {
+          .on( triggerName, function() {
             $this.trigger( eventName );
           } )
       ;
@@ -89,7 +89,7 @@ import jQuery from 'jquery';
 
       $this
         .data( eventName )
-        .unbind( triggerName, function() {
+        .off( triggerName, function() {
           $this.trigger( eventName );
         } )
         .remove()
@@ -98,7 +98,7 @@ import jQuery from 'jquery';
   };
   $.fn[ eventName ] = function( data, fn ) {
     return arguments.length > 0 ?
-      this.bind( eventName, data, fn ) :
+      this.on( eventName, data, fn ) :
       this.trigger( eventName )
     ;
   };

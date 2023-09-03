@@ -21,36 +21,25 @@ __webpack_require__.r(__webpack_exports__);
   var
     options1 = {
       bindType        : 'elementresize fontresize'
-      ,firstClassName : 'js-first'
-      ,lastClassName  : 'js-last'
+      ,firstClassName : 'js-first-element'
+      ,lastClassName  : 'js-last-element'
     }
     ,options2 = {
-      firstClassName : 'js-first'
-      ,lastClassName : 'js-last'
-      // ,bindType : 'elementresize fontresize'
-      ,bindType : 'elementresize'
-      ,onComplete    : function() {
-        $.rowHeight
-          .then( '#list2>li>div' )
-          .then( '#list2>li>div>div' )
-          .then( '#list2>li>div' )
-          .then( '#list2>li' )
-        ;
-      }
+      firstClassName : 'js-firstelement'
+      ,lastClassName : 'js-last-element'
+      ,bindType : 'elementresize fontresize'
     }
     ,options3 = {
       bindType : 'elementresize fontresize'
-      ,onComplete : function() {
-        $.rowHeight
-          .then( '#list3>li>div' )
-          .then( '#list3>li' )
-        ;
+      ,firstClassName : 'js-first-element'
+      ,lastClassName : 'js-last-element'
+      ,onComplete : function( $base ) {
+        $base.css( 'border', 'solid 3px #f0f' );
       }
     }
     ,$list1 = $( '#list1>li' )
-    ,$list2 = $( '#list2>li,#list2>li>div,#list2>li>div>div' )
-    // ,$list2 = $( '#list2>li' )
-    ,$list3 = $( '#list3>li, #list3>li>div' )
+    ,$list2 = $( '#list2' )
+    ,$list3 = $( '#list3' )
   ;
   $( '#list1_i' )
     .on( 'click', function() {
@@ -67,27 +56,28 @@ __webpack_require__.r(__webpack_exports__);
   ;
   $( '#list2_i' )
     .on( 'click', function() {
-      $list2.rowHeight( options2 );
+      $list2.rowHeight( '>li,>li>div,>li>div>div', options2 );
       return false;
     } )
     .trigger( 'click' )
   ;
   $( '#list2_d' )
     .on( 'click', function() {
-      $list2.rowHeight( 'destroy' ).find( 'div' ).css( 'height', '' );
+      $list2.rowHeight( 'destroy' );
       return false;
     } )
   ;
   $( '#list3_i' )
     .on( 'click', function() {
-      $list3.rowHeight( options3 );
+      $list3.rowHeight( '>li,>li>div', options3 );
       return false;
     } )
     .trigger( 'click' )
   ;
   $( '#list3_d' )
     .on( 'click', function() {
-      $list3.rowHeight( 'destroy' ).find( 'div' ).css( 'height', '' );
+      $list3.rowHeight( 'destroy' );
+      $list3.css( 'border', '' );
       return false;
     } )
   ;
@@ -155,7 +145,7 @@ __webpack_require__.r(__webpack_exports__);
 
   $.fn[ eventName ] = function( data, fn ) {
     return arguments.length > 0 ?
-      this.bind( eventName, data, fn ) :
+      this.on( eventName, data, fn ) :
       this.trigger( eventName )
     ;
   };
@@ -182,7 +172,7 @@ __webpack_require__.r(__webpack_exports__);
             ,position : 'absolute'
           } )
           .prependTo( ( $.isWindow( this ) ) ? 'body' : this )
-          .bind( triggerName, function() {
+          .on( triggerName, function() {
             $this.trigger( eventName );
           } )
       ;
@@ -196,7 +186,7 @@ __webpack_require__.r(__webpack_exports__);
 
       $this
         .data( eventName )
-        .unbind( triggerName, function() {
+        .off( triggerName, function() {
           $this.trigger( eventName );
         } )
         .remove()
@@ -205,7 +195,7 @@ __webpack_require__.r(__webpack_exports__);
   };
   $.fn[ eventName ] = function( data, fn ) {
     return arguments.length > 0 ?
-      this.bind( eventName, data, fn ) :
+      this.on( eventName, data, fn ) :
       this.trigger( eventName )
     ;
   };
@@ -237,7 +227,8 @@ __webpack_require__.r(__webpack_exports__);
     pluginName = 'rowHeight'
   ;
   $[ pluginName ] = {
-    $elemTargets  : null
+    $base : null
+    ,$elemTargets  : null
     ,timeoutId : null
     ,handle    : null
     ,settings  : {
@@ -252,8 +243,11 @@ __webpack_require__.r(__webpack_exports__);
       ,forEachRow     : true
     }
     ,init : function( $elemTargets, children, options ) {
-      var settings = this.settings = $.extend( {}, this.settings, options );
-      var that = this;
+      var
+        settings = this.settings = $.extend( {}, this.settings, options )
+        ,that = this
+      ;
+      this.$base = $elemTargets;
       if ( children ) {
         $elemTargets = $elemTargets.find( children );
       }
@@ -261,7 +255,7 @@ __webpack_require__.r(__webpack_exports__);
       this.handle = function() {
         clearTimeout( that.timeoutId );
         that.timeoutId = setTimeout( function() {
-          that.run( that.$elemTargets, that.settings );
+          that.run();
         }, that.settings.delay );
       };
       if ( settings.bindType ) {
@@ -269,72 +263,91 @@ __webpack_require__.r(__webpack_exports__);
           .on( settings.bindType, this.handle )
         ;
       }
-      // this.run( $elemTargets, options );
-      this.setDataOfDepth();
-      this.setMaxHeigthOnRow( this.$elemTargets );
+      this.run();
       return this;
     }
-    ,setMaxHeigthOnRow: function( $elements ) {
+    ,run: function() {
+      var
+        $initialTargets = this.$elemTargets
+        ,that = this
+        ,settings = this.settings
+      ;
+      this.setDataOfDepth();
+      ( function _setMaxHeightForEachRow( $elements ) {
+        setTimeout( function() {
+          $elements = that.get1stTargetRow( $elements );
+          that.setMaxHeigthOneRow( $elements );
+          if ( $elements.length > 0 ) {
+            $initialTargets = $initialTargets.not( $elements );
+            _setMaxHeightForEachRow( $initialTargets );
+          } else {
+            if ( typeof settings.onComplete === 'function' ) {
+              settings.onComplete( that.$base );
+            }
+          }
+        }, 16 );
+      } )( $initialTargets );
+    }
+    ,setMaxHeigthOneRow: function( $elements ) {
       var
         heightData = []
         ,settings = this.settings
       ;
-      $elements = this.get1stTargetRow( $elements );
       $elements
         .css( settings.cssProp, '' )
-        .each( function( index ) {
+        .each( function( index, elem ) {
           var
-            $this    = $( this )
-            ,boxType = $this.css( 'boxSizing' )
+            $elem    = $( elem )
+            ,boxType = $elem.css( 'boxSizing' )
           ;
+          $elem.removeAttr( 'data-rowheight-depth' );
           if ( boxType === 'border-box' ) {
-            heightData[ heightData.length ] = $this.outerHeight();
+            heightData[ heightData.length ] = $elem.outerHeight();
           } else {
-            heightData[ heightData.length ] = $this.height();
+            heightData[ heightData.length ] = $elem.height();
           }
           if ( settings.firstClassName ) {
             if ( index === 0 ) {
-              $this.addClass( settings.firstClassName );
+              $elem.addClass( settings.firstClassName );
             } else {
-              $this.removeClass( settings.firstClassName );
+              $elem.removeClass( settings.firstClassName );
             }
           }
           if ( settings.lastClassName ) {
             if ( index === $elements.length - 1 ) {
-              $this.addClass( settings.lastClassName );
+              $elem.addClass( settings.lastClassName );
             } else {
-              $this.removeClass( settings.lastClassName );
+              $elem.removeClass( settings.lastClassName );
             }
           }
         } )
         .css( settings.cssProp, Math.max.apply( null, heightData ) + 'px' )
-        .css( 'border','solid 3px #f0f' )
       ;
     }
-    ,get1stTargetRow: function() {
+    ,get1stTargetRow: function( $elements ) {
       var $rowGroup = $();
-      _getRowGroup( this.$elemTargets );
+      _getRowGroup( $elements );
       return $rowGroup;
-      function _getRowGroup( $elemTargets ) {
+      function _getRowGroup( $elemnts ) {
         var
           minPosY = Infinity
           ,hasChildInLine = false
           ,maxDepth = -1
         ;
-        $elemTargets
+        $elemnts
           .each( function( index ,elem ) {
             var
               $elem = $( elem )
-              ,posY = $elem.position().top
+              ,posY = $elem.offset().top
               ,depth = parseInt( $elem.attr( 'data-rowheight-depth' ) )
             ;
-            if ( posY < minPosY || ( posY === minPosY && depth > maxDepth ) ) {
+            if ( posY < minPosY && depth > maxDepth ) {
               hasChildInLine = false;
-              maxDepth = depth;
               minPosY = posY;
+              maxDepth = depth;
               $rowGroup = $();
             }
-            if ( posY === minPosY && maxDepth === depth ) {
+            if ( posY === minPosY && depth === maxDepth ) {
               $rowGroup = $.merge( $rowGroup, $elem );
               if ( $elem.children( '[data-rowheight-depth]' ).length > 0 ) {
                 hasChildInLine = true;
@@ -342,7 +355,7 @@ __webpack_require__.r(__webpack_exports__);
             }
           } );
         if ( hasChildInLine === true ) {
-          _getRowGroup( $elemTargets.not( $rowGroup ) );
+          _getRowGroup( $elemnts.not( $rowGroup ) );
         }
       }
     }
@@ -360,157 +373,26 @@ __webpack_require__.r(__webpack_exports__);
           }
         } );
     }
-    ,run : function( elements, options, deferred ) {
-      var
-        settings
-        ,$elemTargets
-      ;
-      if ( elements instanceof jquery__WEBPACK_IMPORTED_MODULE_0__ ) {
-        $elemTargets = elements;
-      } else if ( elements ) {
-        $elemTargets = $( elements );
-      }
-      settings = $.extend( {}, this.settings, options );
-      if ( typeof settings.onBefore === 'function' ) {
-        settings.onBefore();
-      }
-      if ( $elemTargets ) {
-        this.align( $elemTargets, settings, deferred );
-      }
-      return this;
-    }
-    ,align : function( $elemTargets , settings, deferred ) {
-      var
-        that     = this
-        ,heights = []
-        ,paired$
-        ,$ends
-      ;
-      if ( settings.forEachRow === true ) {
-        paired$ = this.getRow( $elemTargets );
-        $elemTargets = paired$[ 0 ];
-        $ends  = paired$[ 1 ];
-      }
-      $elemTargets
-        .css( settings.cssProp, '' )
-        .each( function( index ) {
-          var
-            $this    = $( this )
-            ,boxType = $this.css( 'boxSizing' )
-          ;
-          if ( boxType === 'border-box' ) {
-            heights[ heights.length ] = $this.outerHeight();
-          } else {
-            heights[ heights.length ] = $this.height();
-          }
-          if ( settings.firstClassName ) {
-            if ( index === 0 ) {
-              $this.addClass( settings.firstClassName );
-            } else {
-              $this.removeClass( settings.firstClassName );
-            }
-          }
-          if ( settings.lastClassName ) {
-            if ( index === $elemTargets.length - 1 ) {
-              $this.addClass( settings.lastClassName );
-            } else {
-              $this.removeClass( settings.lastClassName );
-            }
-          }
-        } )
-        .css( settings.cssProp, Math.max.apply( null, heights ) + 'px' )
-      ;
-      setTimeout( function() {
-        if ( $ends && $ends.length ) {
-          settings.children = null;
-          that.align( $ends, settings, deferred );
-        } else {
-          if ( deferred ) {
-            deferred.resolve();
-            delete that.deferred;
-          }
-          if ( typeof settings.onComplete === 'function' ) {
-            settings.onComplete();
-          }
-        }
-      }, 1 );
-    }
-    ,getRow : function( $elemTargets ) {
-      var
-        firstOffsetTop
-        ,$firstRowGroup
-        ,$ends
-      ;
-      $elemTargets
-        .each( function( index ) {
-          var
-            $this         = $( this )
-            ,thisOffsetTop = $this.offset().top
-          ;
-          if ( index === 0 ) {
-            firstOffsetTop = thisOffsetTop;
-          }
-          if ( firstOffsetTop === thisOffsetTop ) {
-            if ( !$firstRowGroup ) {
-              $firstRowGroup = $this;
-            } else {
-              $.merge( $firstRowGroup, $this );
-            }
-          } else {
-            if ( !$ends ) {
-              $ends = $this;
-            } else {
-              $.merge( $ends, $this );
-            }
-          }
-        } )
-      ;
-      return [ $firstRowGroup, $ends ];
-    }
     ,destroy : function() {
-      console.info( 'click destrory' );
-      var $elemTargets;
       clearTimeout( this.timeoutId );
       this.timeoutId = null;
       if ( this.settings.bindType ) {
         $( this.settings.bindObj ).off( this.settings.bindType, this.handle );
       }
-      delete this.deferred;
-      if ( this.$children ) {
-        $elemTargets = this.$children;
-      } else {
-        $elemTargets = this.$elemTargets;
-      }
-      $elemTargets
+      this.$elemTargets
         .css( this.settings.cssProp, '' )
         .removeClass( this.settings.firstClassName )
         .removeClass( this.settings.lastClassName )
       ;
       return this
-        .$elemTargets
+        .$base
         .removeData( pluginName )
       ;
-    }
-    ,then: function( elements, options ) {
-      var
-        deferred = $.Deferred()
-        ,that    = this
-      ;
-      options = options || {};
-      if ( this.deferred ) {
-        this.deferred.promise().then( function() {
-          that.run( elements, options, deferred );
-        } );
-      } else {
-        this.run( elements, options, deferred );
-      }
-      this.deferred = deferred;
-      return this;
     }
   };
   $.fn[ pluginName ] = function( arg1, arg2, arg3 ) {
     var
-      rowHeight
+      plugin
       ,$elemTargets = this
       ,options
       ,children
@@ -539,11 +421,13 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       }
-      this.data( pluginName, _inherit( $[ pluginName ] ).init( $elemTargets, children, options ) );
+      this.data(
+        pluginName, Object.create( $[ pluginName ] ).init( $elemTargets, children, options )
+      );
     }
-    rowHeight = this.data( pluginName );
-    if ( rowHeight[ arg1 ] ) {
-      return rowHeight[ arg1 ].apply( rowHeight, Array.prototype.slice.call( arguments, 1 ) );
+    plugin = this.data( pluginName );
+    if ( plugin[ arg1 ] ) {
+      return plugin[ arg1 ].apply( plugin, Array.prototype.slice.call( arguments, 1 ) );
     }
     return this;
     function _isOptions( obj ) {
@@ -552,14 +436,6 @@ __webpack_require__.r(__webpack_exports__);
         obj instanceof jquery__WEBPACK_IMPORTED_MODULE_0__ === false;
     }
   };
-  function _inherit( o ) {
-    if ( Object.create ) {
-      return Object.create( o );
-    }
-    var F = function() {};
-    F.prototype = o;
-    return new F();
-  }
 } )( jquery__WEBPACK_IMPORTED_MODULE_0__, window );
 
 
