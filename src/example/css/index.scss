@@ -9,37 +9,47 @@ body,html {
 	padding:0;
 }
 .list {
-  &:after {
+  width: 90%;
+  margin: -20px auto 0;
+  padding:0;
+  position: relative;
+  z-index: 1;
+  li {
+    background-color: #dee;
+    width: 60px;
+    padding: 10px 10px;
+    list-style: none;
+    float: left;
+    margin-top: 40px;
+    margin-right: 10px;
+    margin-left: 10px;
+    div {
+	    background: #ff9;
+    }
+    div div {
+	    background: #f99;
+    }
+  }
+  &::after {
     content:'';
     display: block;
     clear:both;
   }
-}
-#test {
-  width: 80%;
-  margin-right: auto;
-  margin-left: auto;
-}
-#test ul {
-	margin: 0;
-	padding:0;
-	clear: left;
-}
-#test li {
-	background-color: #dee;
-	width: 60px;
-	padding: 10px 10px;
-	list-style: none;
-	float: left;
-	margin-top: 20px;
-	margin-right: 10px;
-  margin-left: 10px;
-}
-#test li div {
-	background: #ff9;
-}
-#test li div div {
-	background: #f99;
+  &.js-complete {
+    position: relative;
+    &::before {
+      position: absolute;
+      top: 2em;
+      left: -20px;
+      content: 'Complete';
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #d00;
+      opacity: 0.6;
+      transform: rotate( -45deg );
+      transform-origin: center;
+    }
+  }
 }
 #list1 li {
   position: relative;
@@ -78,12 +88,27 @@ body,html {
 	margin-top: 1em;
 }
 .btnGroup {
-	clear: both;
-	padding-top: 1em;
+  padding: 10px;
+  border-bottom: solid 5px #fcc;
+  margin: 20px 0 0;
+  position: relative;
+  z-index: 2;
   ul+& {
     margin-top: 100px;
   }
 }
-.btnGroup a {
-	margin-left: 1em;
+.btn {
+  margin: 0;
+  padding: 2px 10px 4px;
+  border: solid 1px #e00;
+  background: #ded;
+  min-width: 6em;
+  cursor: pointer;
+  &:hover {
+    background: #cec;
+  }
+  &+.btn {
+    margin-left: 1em;
+  }
 }
+

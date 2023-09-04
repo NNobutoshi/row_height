@@ -34,19 +34,18 @@ __webpack_require__.r(__webpack_exports__);
       ,firstClassName : 'js-first-element'
       ,lastClassName : 'js-last-element'
       ,onComplete : function( $base ) {
-        $base.css( 'border', 'solid 3px #f0f' );
+        $base.addClass( 'js-complete' );
       }
     }
     ,$list1 = $( '#list1>li' )
     ,$list2 = $( '#list2' )
     ,$list3 = $( '#list3' )
   ;
-  $( '#list1_i' )
+  $( '#list1_r' )
     .on( 'click', function() {
       $list1.rowHeight( options1 );
       return false;
     } )
-    .trigger( 'click' )
   ;
   $( '#list1_d' )
     .on( 'click', function() {
@@ -54,12 +53,11 @@ __webpack_require__.r(__webpack_exports__);
       return false;
     } )
   ;
-  $( '#list2_i' )
+  $( '#list2_r' )
     .on( 'click', function() {
       $list2.rowHeight( '>li,>li>div,>li>div>div', options2 );
       return false;
     } )
-    .trigger( 'click' )
   ;
   $( '#list2_d' )
     .on( 'click', function() {
@@ -67,17 +65,16 @@ __webpack_require__.r(__webpack_exports__);
       return false;
     } )
   ;
-  $( '#list3_i' )
+  $( '#list3_r' )
     .on( 'click', function() {
       $list3.rowHeight( '>li,>li>div', options3 );
       return false;
     } )
-    .trigger( 'click' )
   ;
   $( '#list3_d' )
     .on( 'click', function() {
       $list3.rowHeight( 'destroy' );
-      $list3.css( 'border', '' );
+      $list3.removeClass( 'js-complete' );
       return false;
     } )
   ;
@@ -249,7 +246,7 @@ __webpack_require__.r(__webpack_exports__);
       ;
       this.$base = $elemTargets;
       if ( children ) {
-        $elemTargets = $elemTargets.find( children );
+        $elemTargets = this.$base.find( children );
       }
       this.$elemTargets = $elemTargets;
       this.handle = function() {
@@ -328,13 +325,13 @@ __webpack_require__.r(__webpack_exports__);
       var $rowGroup = $();
       _getRowGroup( $elements );
       return $rowGroup;
-      function _getRowGroup( $elemnts ) {
+      function _getRowGroup( $elements ) {
         var
           minPosY = Infinity
           ,hasChildInLine = false
           ,maxDepth = -1
         ;
-        $elemnts
+        $elements
           .each( function( index ,elem ) {
             var
               $elem = $( elem )
@@ -355,7 +352,7 @@ __webpack_require__.r(__webpack_exports__);
             }
           } );
         if ( hasChildInLine === true ) {
-          _getRowGroup( $elemnts.not( $rowGroup ) );
+          _getRowGroup( $elements.not( $rowGroup ) );
         }
       }
     }

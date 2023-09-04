@@ -34,7 +34,7 @@ import jQuery from 'jquery';
       ;
       this.$base = $elemTargets;
       if ( children ) {
-        $elemTargets = $elemTargets.find( children );
+        $elemTargets = this.$base.find( children );
       }
       this.$elemTargets = $elemTargets;
       this.handle = function() {
@@ -113,13 +113,13 @@ import jQuery from 'jquery';
       var $rowGroup = $();
       _getRowGroup( $elements );
       return $rowGroup;
-      function _getRowGroup( $elemnts ) {
+      function _getRowGroup( $elements ) {
         var
           minPosY = Infinity
           ,hasChildInLine = false
           ,maxDepth = -1
         ;
-        $elemnts
+        $elements
           .each( function( index ,elem ) {
             var
               $elem = $( elem )
@@ -140,7 +140,7 @@ import jQuery from 'jquery';
             }
           } );
         if ( hasChildInLine === true ) {
-          _getRowGroup( $elemnts.not( $rowGroup ) );
+          _getRowGroup( $elements.not( $rowGroup ) );
         }
       }
     }
