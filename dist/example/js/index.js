@@ -391,8 +391,8 @@ __webpack_require__.r(__webpack_exports__);
     var
       plugin
       ,$elemTargets = this
-      ,options
       ,children
+      ,options
     ;
     if ( !this.data( pluginName ) ) {
       if ( $[ pluginName ][ arg1 ] ) {
@@ -418,12 +418,14 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       }
-      this.data(
-        pluginName, Object.create( $[ pluginName ] ).init( $elemTargets, children, options )
-      );
+      if ( !$[ pluginName ][ arg1 ] ) {
+        this.data(
+          pluginName, Object.create( $[ pluginName ] ).init( $elemTargets, children, options )
+        );
+      }
     }
     plugin = this.data( pluginName );
-    if ( plugin[ arg1 ] ) {
+    if ( plugin && plugin[ arg1 ] ) {
       return plugin[ arg1 ].apply( plugin, Array.prototype.slice.call( arguments, 1 ) );
     }
     return this;
