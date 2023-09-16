@@ -5,27 +5,27 @@ import '../../js/jquery.resize_events.js';
 
 ( function( $ ) {
   var
-    options1 = {
-      bindType        : 'elementresize fontresize'
-      ,firstClassName : 'js-first-element'
-      ,lastClassName  : 'js-last-element'
-    }
-    ,options2 = {
-      firstClassName : 'js-firstelement'
-      ,lastClassName : 'js-last-element'
-      ,bindType : 'elementresize fontresize'
-    }
-    ,options3 = {
-      bindType : 'elementresize fontresize'
-      ,firstClassName : 'js-first-element'
-      ,lastClassName : 'js-last-element'
-      ,onComplete : function( $base ) {
-        $base.addClass( 'js-complete' );
-      }
-    }
-    ,$list1 = $( '#list1>li' )
+    $list1 = $( '#list1>li' )
     ,$list2 = $( '#list2' )
     ,$list3 = $( '#list3' )
+    ,options1 = {
+      eventType        : 'elementresize fontresize',
+      firstOfRowClassName : 'js-firstOfRow',
+      lastOfRowClassName  : 'js-lastOfRow',
+    }
+    ,options2 = {
+      eventType : 'elementresize fontresize',
+      firstOfRowClassName : 'js-firstOfRow',
+      lastOfRowClassName : 'js-lastOfRow',
+    }
+    ,options3 = {
+      eventType : 'elementresize fontresize',
+      firstOfRowClassName : 'js-firstOfRow',
+      lastOfRowClassName : 'js-lastOfRow',
+      onComplete : function( $base ) {
+        $base.addClass( 'js-complete' );
+      },
+    }
   ;
   $( '#list1_r' )
     .on( 'click', function() {

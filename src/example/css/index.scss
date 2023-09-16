@@ -16,6 +16,7 @@ body,html {
   z-index: 1;
   li {
     background-color: #dee;
+    box-sizing: border-box;
     width: 60px;
     padding: 10px 10px;
     list-style: none;
@@ -35,9 +36,7 @@ body,html {
     display: block;
     clear:both;
   }
-  &.js-complete {
-    position: relative;
-    &::before {
+  &::before {
       position: absolute;
       top: 2em;
       left: -20px;
@@ -45,16 +44,22 @@ body,html {
       font-size: 2.5em;
       font-weight: bold;
       color: #d00;
-      opacity: 0.6;
+      opacity: 0;
       transform: rotate( -45deg );
       transform-origin: center;
+      transition: opacity 0.2s 0.2s ease-in;
+  }
+  &.js-complete {
+    position: relative;
+    &::before {
+      opacity: 0.6;
     }
   }
 }
 #list1 li {
   position: relative;
 	box-sizing: border-box;
-  &.js-first-element {
+  &.js-firstOfRow {
     &::before {
       z-index: 1;
       position: absolute;
@@ -67,7 +72,7 @@ body,html {
       transform: rotate( -45deg )
     }
   }
-  &.js-last-element {
+  &.js-lastOfRow {
     &::after {
       z-index: 1;
       position: absolute;

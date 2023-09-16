@@ -369,6 +369,8 @@ body, html {
 }
 .list li {
   background-color: #dee;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   width: 60px;
   padding: 10px 10px;
   list-style: none;
@@ -388,10 +390,7 @@ body, html {
   display: block;
   clear: both;
 }
-.list.js-complete {
-  position: relative;
-}
-.list.js-complete::before {
+.list::before {
   position: absolute;
   top: 2em;
   left: -20px;
@@ -399,11 +398,19 @@ body, html {
   font-size: 2.5em;
   font-weight: bold;
   color: #d00;
-  opacity: 0.6;
+  opacity: 0;
   -webkit-transform: rotate(-45deg);
           transform: rotate(-45deg);
   -webkit-transform-origin: center;
           transform-origin: center;
+  -webkit-transition: opacity 0.2s 0.2s ease-in;
+  transition: opacity 0.2s 0.2s ease-in;
+}
+.list.js-complete {
+  position: relative;
+}
+.list.js-complete::before {
+  opacity: 0.6;
 }
 
 #list1 li {
@@ -411,7 +418,7 @@ body, html {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }
-#list1 li.js-first-element::before {
+#list1 li.js-firstOfRow::before {
   z-index: 1;
   position: absolute;
   content: "first";
@@ -423,7 +430,7 @@ body, html {
   -webkit-transform: rotate(-45deg);
           transform: rotate(-45deg);
 }
-#list1 li.js-last-element::after {
+#list1 li.js-lastOfRow::after {
   z-index: 1;
   position: absolute;
   content: "last";

@@ -58,7 +58,7 @@ import jQuery from 'jquery';
 /*! fontresize  */
 ( function( $ ) {
   var
-    className    = 'js-checker'
+    className    = 'js-resizechecker'
     ,eventName   = 'fontresize'
     ,triggerName = 'elementresize'
   ;
@@ -74,7 +74,7 @@ import jQuery from 'jquery';
             ,left     : '-9999px'
             ,position : 'absolute'
           } )
-          .prependTo( ( $.isWindow( this ) ) ? 'body' : this )
+          .prependTo( ( this != null && this === this.window ) ? 'body' : this )
           .on( triggerName, function() {
             $this.trigger( eventName );
           } )

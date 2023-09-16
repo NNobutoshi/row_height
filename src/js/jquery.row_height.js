@@ -14,18 +14,19 @@ import jQuery from 'jquery';
   $[ pluginName ] = {
     $base : null
     ,$elemTargets  : null
-    ,timeoutId : null
+    ,rafId : null
     ,handle    : null
     ,settings  : {
-      firstClassName  : ''
-      ,lastClassName  : ''
-      ,delay          : 200
-      ,onBefore       : null
-      ,onComplete     : null
-      ,cssProp        : 'height'
-      ,bindType       : ''
-      ,bindObj        : window
-      ,forEachRow     : true
+      firstOfRowClassName  : ''
+      ,lastOfRowClassName  : ''
+      ,eventDelay          : 160
+      ,settingHeightDelay  : 16
+      ,onBefore            : null
+      ,onComplete          : null
+      ,cssProp             : 'height'
+      ,eventType           : ''
+      ,eventObj            : window
+      ,isTargetAll         : false
     }
     ,init : function( $elemTargets, children, options ) {
       var
@@ -37,47 +38,75 @@ import jQuery from 'jquery';
         $elemTargets = this.$base.find( children );
       }
       this.$elemTargets = $elemTargets;
-      this.handle = function() {
-        clearTimeout( that.timeoutId );
-        that.timeoutId = setTimeout( function() {
-          that.run();
-        }, that.settings.delay );
+      this.handle = function( e ) {
+        var startTime = undefined;
+        cancelAnimationFrame( that.rafId );
+        ( function _handle() {
+          that.rafId = requestAnimationFrame( function( time ) {
+            if ( startTime === undefined ) {
+              startTime = time;
+            }
+            if ( time - startTime > that.settings.eventDelay ) {
+              that.run( that.$elemTargets );
+            } else {
+              _handle();
+            }
+          } );
+        } )();
       };
-      if ( settings.bindType ) {
-        $( settings.bindObj )
-          .on( settings.bindType, this.handle )
+      if ( settings.eventType ) {
+        $( settings.eventObj )
+          .on( settings.eventType, function( e ) {
+            that.handle( e );
+          } )
         ;
       }
-      this.run();
+      this.run( this.$elemTargets );
       return this;
     }
-    ,run: function() {
+    ,run: function( $elements, options ) {
       var
-        $initialTargets = this.$elemTargets
+        $initialTargets = $elements
         ,that = this
-        ,settings = this.settings
+        ,settings = this.settings = $.extend( {}, this.settings, options )
+        ,startTime = undefined
       ;
-      this.setDataOfDepth();
+      this.setDataOfDepth( $initialTargets );
+      if ( settings.isTargetAll === true ) {
+        this.setMaxHeigth( $initialTargets );
+        return this;
+      }
       ( function _setMaxHeightForEachRow( $elements ) {
-        setTimeout( function() {
-          $elements = that.get1stTargetRow( $elements );
-          that.setMaxHeigthOneRow( $elements );
-          if ( $elements.length > 0 ) {
-            $initialTargets = $initialTargets.not( $elements );
-            _setMaxHeightForEachRow( $initialTargets );
-          } else {
-            if ( typeof settings.onComplete === 'function' ) {
-              settings.onComplete( that.$base );
-            }
+        requestAnimationFrame( function( time ) {
+          if ( startTime === undefined ) {
+            startTime = time;
           }
-        }, 16 );
+          if ( time - startTime > settings.settingHeightDelay ) {
+            $elements = that.get1stTargetRow( $elements );
+            that.setMaxHeigth( $elements );
+            if ( $elements.length > 0 ) {
+              $initialTargets = $initialTargets.not( $elements );
+              _setMaxHeightForEachRow( $initialTargets );
+            } else {
+              if ( typeof settings.onComplete === 'function' ) {
+                settings.onComplete( that.$base );
+              }
+            }
+          } else {
+            _setMaxHeightForEachRow( $elements );
+          }
+        } );
       } )( $initialTargets );
+      return this;
     }
-    ,setMaxHeigthOneRow: function( $elements ) {
+    ,setMaxHeigth: function( $elements ) {
       var
         heightData = []
         ,settings = this.settings
       ;
+      if ( $elements && $elements.length === 0 ) {
+        return this;
+      }
       $elements
         .css( settings.cssProp, '' )
         .each( function( index, elem ) {
@@ -91,23 +120,24 @@ import jQuery from 'jquery';
           } else {
             heightData[ heightData.length ] = $elem.height();
           }
-          if ( settings.firstClassName ) {
+          if ( settings.firstOfRowClassName ) {
             if ( index === 0 ) {
-              $elem.addClass( settings.firstClassName );
+              $elem.addClass( settings.firstOfRowClassName );
             } else {
-              $elem.removeClass( settings.firstClassName );
+              $elem.removeClass( settings.firstOfRowClassName );
             }
           }
-          if ( settings.lastClassName ) {
+          if ( settings.lastOfRowClassName ) {
             if ( index === $elements.length - 1 ) {
-              $elem.addClass( settings.lastClassName );
+              $elem.addClass( settings.lastOfRowClassName );
             } else {
-              $elem.removeClass( settings.lastClassName );
+              $elem.removeClass( settings.lastOfRowClassName );
             }
           }
         } )
         .css( settings.cssProp, Math.max.apply( null, heightData ) + 'px' )
       ;
+      return this;
     }
     ,get1stTargetRow: function( $elements ) {
       var $rowGroup = $();
@@ -144,9 +174,9 @@ import jQuery from 'jquery';
         }
       }
     }
-    ,setDataOfDepth : function() {
+    ,setDataOfDepth : function( $elemTargets ) {
       var that = this;
-      this.$elemTargets
+      $elemTargets
         .each( function( index , elem ) {
           $( elem ).attr( 'data-rowheight-depth', 'null' );
         } )
@@ -159,15 +189,15 @@ import jQuery from 'jquery';
         } );
     }
     ,destroy : function() {
-      clearTimeout( this.timeoutId );
-      this.timeoutId = null;
-      if ( this.settings.bindType ) {
-        $( this.settings.bindObj ).off( this.settings.bindType, this.handle );
+      cancelAnimationFrame( this.rafId );
+      this.rafId = null;
+      if ( this.settings.eventType ) {
+        $( this.settings.eventObj ).off( this.settings.eventType, this.handle );
       }
       this.$elemTargets
         .css( this.settings.cssProp, '' )
-        .removeClass( this.settings.firstClassName )
-        .removeClass( this.settings.lastClassName )
+        .removeClass( this.settings.firstOfRowClassName )
+        .removeClass( this.settings.lastOfRowClassName )
       ;
       return this
         .$base
