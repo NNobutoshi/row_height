@@ -9,20 +9,20 @@ import '../../js/jquery.resize_events.js';
     ,$list2 = $( '#list2' )
     ,$list3 = $( '#list3' )
     ,options1 = {
-      eventType        : 'elementresize fontresize',
+      eventType           : 'elementresize fontresize',
       firstOfRowClassName : 'js-firstOfRow',
       lastOfRowClassName  : 'js-lastOfRow',
     }
     ,options2 = {
-      eventType : 'elementresize fontresize',
+      eventType           : 'elementresize fontresize',
       firstOfRowClassName : 'js-firstOfRow',
-      lastOfRowClassName : 'js-lastOfRow',
+      lastOfRowClassName  : 'js-lastOfRow',
     }
     ,options3 = {
-      eventType : 'elementresize fontresize',
+      eventType           : 'elementresize fontresize',
       firstOfRowClassName : 'js-firstOfRow',
-      lastOfRowClassName : 'js-lastOfRow',
-      onComplete : function( $base ) {
+      lastOfRowClassName  : 'js-lastOfRow',
+      onComplete          : function( $base ) {
         $base.addClass( 'js-complete' );
       },
     }

@@ -56,9 +56,7 @@ import jQuery from 'jquery';
       };
       if ( settings.eventType ) {
         $( settings.eventObj )
-          .on( settings.eventType, function( e ) {
-            that.handle( e );
-          } )
+          .on( settings.eventType, that.handle )
         ;
       }
       this.run( this.$elemTargets );

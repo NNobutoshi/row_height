@@ -23,20 +23,20 @@ __webpack_require__.r(__webpack_exports__);
     ,$list2 = $( '#list2' )
     ,$list3 = $( '#list3' )
     ,options1 = {
-      eventType        : 'elementresize fontresize',
+      eventType           : 'elementresize fontresize',
       firstOfRowClassName : 'js-firstOfRow',
       lastOfRowClassName  : 'js-lastOfRow',
     }
     ,options2 = {
-      eventType : 'elementresize fontresize',
+      eventType           : 'elementresize fontresize',
       firstOfRowClassName : 'js-firstOfRow',
-      lastOfRowClassName : 'js-lastOfRow',
+      lastOfRowClassName  : 'js-lastOfRow',
     }
     ,options3 = {
-      eventType : 'elementresize fontresize',
+      eventType           : 'elementresize fontresize',
       firstOfRowClassName : 'js-firstOfRow',
-      lastOfRowClassName : 'js-lastOfRow',
-      onComplete : function( $base ) {
+      lastOfRowClassName  : 'js-lastOfRow',
+      onComplete          : function( $base ) {
         $base.addClass( 'js-complete' );
       },
     }
@@ -268,9 +268,7 @@ __webpack_require__.r(__webpack_exports__);
       };
       if ( settings.eventType ) {
         $( settings.eventObj )
-          .on( settings.eventType, function( e ) {
-            that.handle( e );
-          } )
+          .on( settings.eventType, that.handle )
         ;
       }
       this.run( this.$elemTargets );
