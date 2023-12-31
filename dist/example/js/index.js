@@ -36,8 +36,8 @@ __webpack_require__.r(__webpack_exports__);
       eventType           : 'elementresize fontresize',
       firstOfRowClassName : 'js-firstOfRow',
       lastOfRowClassName  : 'js-lastOfRow',
-      onComplete          : function( $base ) {
-        $base.addClass( 'js-complete' );
+      onComplete          : function( instantiated ) {
+        instantiated.$elemBase.addClass( 'js-complete' );
       },
     }
   ;
@@ -224,7 +224,7 @@ __webpack_require__.r(__webpack_exports__);
     pluginName = 'rowHeight'
   ;
   $[ pluginName ] = {
-    $base : null
+    $elemBase : null
     ,$elemTargets  : null
     ,rafId : null
     ,handle    : null
@@ -240,16 +240,21 @@ __webpack_require__.r(__webpack_exports__);
       ,eventObj            : window
       ,isTargetAll         : false
     }
-    ,init : function( $elemTargets, children, options ) {
+    ,init : function( elements, children, options ) {
       var
-        settings = this.settings = $.extend( {}, this.settings, options )
-        ,that = this
+        that = this
+        ,settings = this.settings = $.extend( {}, this.settings, options )
       ;
-      this.$base = $elemTargets;
-      if ( children ) {
-        $elemTargets = this.$base.find( children );
+      this.$elemBase = ( elements instanceof $ ) ? elements : $( elements );
+      if (
+        children instanceof $ === true ||
+        children instanceof HTMLElement === true ||
+        typeof children === 'string'
+      ) {
+        this.$elemTargets = this.$elemBase.find( children );
+      } else {
+        this.$elemTargets = this.$elemBase;
       }
-      this.$elemTargets = $elemTargets;
       this.handle = function( e ) {
         var startTime = undefined;
         cancelAnimationFrame( that.rafId );
@@ -274,16 +279,19 @@ __webpack_require__.r(__webpack_exports__);
       this.run( this.$elemTargets );
       return this;
     }
-    ,run: function( $elements, options ) {
+    ,run: function( elements, options ) {
       var
-        $initialTargets = $elements
-        ,that = this
-        ,settings = this.settings = $.extend( {}, this.settings, options )
+        that = this
+        ,settings = $.extend( {}, this.settings, options )
+        ,$initialTargets = ( elements instanceof $ === true ) ? elements : $( elements )
         ,startTime = undefined
       ;
+      if ( typeof settings.onBefore === 'function' ) {
+        settings.onBefore( this );
+      }
       this.setDataOfDepth( $initialTargets );
       if ( settings.isTargetAll === true ) {
-        this.setMaxHeigth( $initialTargets );
+        this.setMaxHeight( $initialTargets, settings );
         return this;
       }
       ( function _setMaxHeightForEachRow( $elements ) {
@@ -292,14 +300,14 @@ __webpack_require__.r(__webpack_exports__);
             startTime = time;
           }
           if ( time - startTime > settings.settingHeightDelay ) {
-            $elements = that.get1stTargetRow( $elements );
-            that.setMaxHeigth( $elements );
+            $elements = that.getElementsOnFirstRow( $elements );
+            that.setMaxHeight( $elements );
             if ( $elements.length > 0 ) {
               $initialTargets = $initialTargets.not( $elements );
               _setMaxHeightForEachRow( $initialTargets );
             } else {
               if ( typeof settings.onComplete === 'function' ) {
-                settings.onComplete( that.$base );
+                settings.onComplete( that );
               }
             }
           } else {
@@ -309,10 +317,11 @@ __webpack_require__.r(__webpack_exports__);
       } )( $initialTargets );
       return this;
     }
-    ,setMaxHeigth: function( $elements ) {
+    ,setMaxHeight: function( elements, options ) {
       var
         heightData = []
-        ,settings = this.settings
+        ,$elements = ( elements instanceof $ === true ) ? elements : $( elements )
+        ,settings = $.extend( {}, this.settings, options )
       ;
       if ( $elements && $elements.length === 0 ) {
         return this;
@@ -349,11 +358,14 @@ __webpack_require__.r(__webpack_exports__);
       ;
       return this;
     }
-    ,get1stTargetRow: function( $elements ) {
-      var $rowGroup = $();
-      _getRowGroup( $elements );
-      return $rowGroup;
-      function _getRowGroup( $elements ) {
+    ,getElementsOnFirstRow: function( elements ) {
+      var
+        $elemSelected = $()
+        ,$elements = ( elements instanceof $ === true ) ? elements : $( elements )
+      ;
+      _selectElementsOnFirstRow( $elements );
+      return $elemSelected;
+      function _selectElementsOnFirstRow( $elements ) {
         var
           minPosY = Infinity
           ,hasChildInLine = false
@@ -370,49 +382,61 @@ __webpack_require__.r(__webpack_exports__);
               hasChildInLine = false;
               minPosY = posY;
               maxDepth = depth;
-              $rowGroup = $();
+              $elemSelected = $();
             }
             if ( posY === minPosY && depth === maxDepth ) {
-              $rowGroup = $.merge( $rowGroup, $elem );
+              $elemSelected = $.merge( $elemSelected, $elem );
               if ( $elem.children( '[data-rowheight-depth]' ).length > 0 ) {
                 hasChildInLine = true;
               }
             }
-          } );
+          } )
+        ;
         if ( hasChildInLine === true ) {
-          _getRowGroup( $elements.not( $rowGroup ) );
+          _selectElementsOnFirstRow( $elements.not( $elemSelected ) );
         }
       }
     }
-    ,setDataOfDepth : function( $elemTargets ) {
-      var that = this;
-      $elemTargets
+    ,setDataOfDepth : function( elements ) {
+      var
+        maxDepth = -1
+        ,$elements = ( elements instanceof $ === true ) ? elements : $( elements )
+      ;
+      $elements
         .each( function( index , elem ) {
           $( elem ).attr( 'data-rowheight-depth', 'null' );
         } )
         .each( function( index, elem ) {
           var len = $( elem ).parents( '[data-rowheight-depth]' ).length;
           $( elem ).attr( 'data-rowheight-depth', len );
-          if ( len > that.maxDepth ) {
-            that.maxDepth = len;
+          if ( len > maxDepth ) {
+            maxDepth = len;
           }
-        } );
+        } )
+      ;
     }
-    ,destroy : function() {
+    ,destroy : function( elements ) {
+      var $elements = ( elements && elements instanceof $ === true ) ? elements : $( elements );
+      if ( !elements ) {
+        $elements = this.$elemTargets;
+      }
       cancelAnimationFrame( this.rafId );
       this.rafId = null;
       if ( this.settings.eventType ) {
         $( this.settings.eventObj ).off( this.settings.eventType, this.handle );
       }
-      this.$elemTargets
+      $elements
         .css( this.settings.cssProp, '' )
         .removeClass( this.settings.firstOfRowClassName )
         .removeClass( this.settings.lastOfRowClassName )
       ;
-      return this
-        .$base
-        .removeData( pluginName )
-      ;
+      if ( this.$elemBase && this.$elemBase.length > 0 ) {
+        return this
+          .$elemBase
+          .removeData( pluginName )
+        ;
+      }
+      return $elements;
     }
   };
   $.fn[ pluginName ] = function( arg1, arg2, arg3 ) {
@@ -459,8 +483,8 @@ __webpack_require__.r(__webpack_exports__);
     return this;
     function _isOptions( obj ) {
       return typeof obj === 'object' &&
-        ( obj.nodeType === undefined || obj.nodeType !== 1 ) &&
-        obj instanceof jquery__WEBPACK_IMPORTED_MODULE_0__ === false;
+        ( obj.nodeType === undefined || obj.nodeType !== Node.ELEMENT_NODE ) &&
+        obj instanceof $ === false;
     }
   };
 } )( jquery__WEBPACK_IMPORTED_MODULE_0__, window );

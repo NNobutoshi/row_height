@@ -22,8 +22,8 @@ import '../../js/jquery.resize_events.js';
       eventType           : 'elementresize fontresize',
       firstOfRowClassName : 'js-firstOfRow',
       lastOfRowClassName  : 'js-lastOfRow',
-      onComplete          : function( $base ) {
-        $base.addClass( 'js-complete' );
+      onComplete          : function( instantiated ) {
+        instantiated.$elemBase.addClass( 'js-complete' );
       },
     }
   ;
