@@ -212,7 +212,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /*!
 * jQuery.row_height
-* version : 3.1.0
+* version : 4.0.0
 * link    : https://github.com/NNobutoshi/row_height/
 * License : MIT
 */
