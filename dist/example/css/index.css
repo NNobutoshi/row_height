@@ -365,7 +365,7 @@ body, html {
   margin: -20px auto 0;
   padding: 0;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 .list li {
   background-color: #dee;
@@ -456,7 +456,7 @@ body, html {
   border-bottom: solid 5px #fcc;
   margin: 20px 0 0;
   position: relative;
-  z-index: 2;
+  z-index: 1;
 }
 ul + .btnGroup {
   margin-top: 100px;

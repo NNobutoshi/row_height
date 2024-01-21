@@ -22,8 +22,8 @@ import '../../js/jquery.resize_events.js';
       eventType           : 'elementresize fontresize',
       firstOfRowClassName : 'js-firstOfRow',
       lastOfRowClassName  : 'js-lastOfRow',
-      onComplete          : function( instantiated ) {
-        instantiated.$elemBase.addClass( 'js-complete' );
+      onComplete          : function() {
+        this.$elemBase.addClass( 'js-complete' );
       },
     }
   ;
@@ -53,7 +53,7 @@ import '../../js/jquery.resize_events.js';
   ;
   $( '#list3_r' )
     .on( 'click', function() {
-      $list3.rowHeight( '>li,>li>div', options3 );
+      $list3.rowHeight( '>li,>li>div,>li>div>div', options3 );
       return false;
     } )
   ;

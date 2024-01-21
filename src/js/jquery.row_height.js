@@ -75,7 +75,7 @@ import jQuery from 'jquery';
         ,startTime = undefined
       ;
       if ( typeof settings.onBefore === 'function' ) {
-        settings.onBefore( this );
+        settings.onBefore.call( this );
       }
       this.setDataOfDepth( $initialTargets );
       if ( settings.isTargetAll === true ) {
@@ -89,13 +89,13 @@ import jQuery from 'jquery';
           }
           if ( time - startTime > settings.settingHeightDelay ) {
             $elements = that.getElementsOnFirstRow( $elements );
-            that.setMaxHeight( $elements );
             if ( $elements.length > 0 ) {
+              that.setMaxHeight( $elements );
               $initialTargets = $initialTargets.not( $elements );
               _setMaxHeightForEachRow( $initialTargets );
             } else {
               if ( typeof settings.onComplete === 'function' ) {
-                settings.onComplete( that );
+                settings.onComplete.call( that );
               }
             }
           } else {
@@ -151,9 +151,7 @@ import jQuery from 'jquery';
         $elemSelected = $()
         ,$elements = ( elements instanceof $ === true ) ? elements : $( elements )
       ;
-      _selectElementsOnFirstRow( $elements );
-      return $elemSelected;
-      function _selectElementsOnFirstRow( $elements ) {
+      return ( function _selectElementsOnFirstRow( $elements ) {
         var
           minPosY = Infinity
           ,hasChildInLine = false
@@ -181,9 +179,11 @@ import jQuery from 'jquery';
           } )
         ;
         if ( hasChildInLine === true ) {
-          _selectElementsOnFirstRow( $elements.not( $elemSelected ) );
+          return _selectElementsOnFirstRow( $elements.not( $elemSelected ) );
+        } else {
+          return $elemSelected;
         }
-      }
+      } )( $elements );
     }
     ,setDataOfDepth : function( elements ) {
       var
@@ -204,10 +204,7 @@ import jQuery from 'jquery';
       ;
     }
     ,destroy : function( elements ) {
-      var $elements = ( elements && elements instanceof $ === true ) ? elements : $( elements );
-      if ( !elements ) {
-        $elements = this.$elemTargets;
-      }
+      var $elements = ( elements ) ? $( elements ) : this.$elemTargets;
       cancelAnimationFrame( this.rafId );
       this.rafId = null;
       if ( this.settings.eventType ) {
@@ -257,16 +254,17 @@ import jQuery from 'jquery';
             children = arg1;
           }
         }
-      }
-      if ( !$[ pluginName ][ arg1 ] ) {
         this.data(
-          pluginName, Object.create( $[ pluginName ] ).init( $elemTargets, children, options )
+          pluginName,
+          Object
+            .create( $[ pluginName ] )
+            .init( $elemTargets, children, options )
         );
       }
     }
     plugin = this.data( pluginName );
     if ( plugin && plugin[ arg1 ] ) {
-      return plugin[ arg1 ].apply( plugin, Array.prototype.slice.call( arguments, 1 ) );
+      plugin[ arg1 ].call( plugin, children, options );
     }
     return this;
     function _isOptions( obj ) {
