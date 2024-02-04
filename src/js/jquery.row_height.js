@@ -12,7 +12,7 @@ import jQuery from 'jquery';
     pluginName = 'rowHeight'
   ;
   $[ pluginName ] = {
-    $elemBase : null
+    $elemBase : $( document )
     ,$elemTargets  : null
     ,rafId : null
     ,handle    : null
@@ -27,6 +27,7 @@ import jQuery from 'jquery';
       ,eventType           : ''
       ,eventObj            : window
       ,isTargetAll         : false
+      ,isBaseEqualTarget   : false
     }
     ,init : function( elements, children, options ) {
       var
@@ -42,6 +43,7 @@ import jQuery from 'jquery';
         this.$elemTargets = this.$elemBase.find( children );
       } else {
         this.$elemTargets = this.$elemBase;
+        this.isBaseEqualTarget = true;
       }
       this.handle = function( e ) {
         var startTime = undefined;
@@ -70,10 +72,26 @@ import jQuery from 'jquery';
     ,run: function( elements, options ) {
       var
         that = this
+        ,$initialTargets
         ,settings = $.extend( {}, this.settings, options )
-        ,$initialTargets = ( elements instanceof $ === true ) ? elements : $( elements )
         ,startTime = undefined
       ;
+      if ( !elements && this.$elemTargets && this.$elemTargets.length > 0 ) {
+        if ( this.isBaseEqualTarget === true ) {
+          $initialTargets = this.$elemBase;
+        } else {
+          $initialTargets = this.$elemTargets;
+        }
+      } else if ( elements instanceof $ === true ) {
+        $initialTargets = elements;
+      } else if ( !this.$elemTargets ) {
+        $initialTargets = this.$elemBase;
+      } else {
+        $initialTargets = this.$elemBase.find( elements );
+      }
+      if ( $initialTargets.length === 0 ) {
+        return this;
+      }
       if ( typeof settings.onBefore === 'function' ) {
         settings.onBefore.call( this );
       }
@@ -90,7 +108,7 @@ import jQuery from 'jquery';
           if ( time - startTime > settings.settingHeightDelay ) {
             $elements = that.getElementsOnFirstRow( $elements );
             if ( $elements.length > 0 ) {
-              that.setMaxHeight( $elements );
+              that.setMaxHeight( $elements, settings );
               $initialTargets = $initialTargets.not( $elements );
               _setMaxHeightForEachRow( $initialTargets );
             } else {
@@ -108,10 +126,11 @@ import jQuery from 'jquery';
     ,setMaxHeight: function( elements, options ) {
       var
         heightData = []
-        ,$elements = ( elements instanceof $ === true ) ? elements : $( elements )
+        ,$elements = ( elements instanceof $ === true ) ?
+          elements : this.$elemBase.find( elements )
         ,settings = $.extend( {}, this.settings, options )
       ;
-      if ( $elements && $elements.length === 0 ) {
+      if ( $elements.length === 0 ) {
         return this;
       }
       $elements
@@ -149,8 +168,12 @@ import jQuery from 'jquery';
     ,getElementsOnFirstRow: function( elements ) {
       var
         $elemSelected = $()
-        ,$elements = ( elements instanceof $ === true ) ? elements : $( elements )
+        ,$elements = ( elements instanceof $ === true ) ?
+          elements : this.$elemBase.find( elements )
       ;
+      if ( $elements && $elements.length === 0 ) {
+        return this;
+      }
       return ( function _selectElementsOnFirstRow( $elements ) {
         var
           minPosY = Infinity
@@ -188,8 +211,12 @@ import jQuery from 'jquery';
     ,setDataOfDepth : function( elements ) {
       var
         maxDepth = -1
-        ,$elements = ( elements instanceof $ === true ) ? elements : $( elements )
+        ,$elements = ( elements instanceof $ === true ) ?
+          elements : this.$elemBase.find( elements )
       ;
+      if ( $elements.length === 0 ) {
+        return this;
+      }
       $elements
         .each( function( index , elem ) {
           $( elem ).attr( 'data-rowheight-depth', 'null' );
@@ -204,7 +231,21 @@ import jQuery from 'jquery';
       ;
     }
     ,destroy : function( elements ) {
-      var $elements = ( elements ) ? $( elements ) : this.$elemTargets;
+      var $elements;
+      if ( !elements && this.$elemTargets && this.$elemTargets.length > 0 ) {
+        if ( this.isBaseEqualTarget === true ) {
+          $elements = this.$elemBase;
+        } else {
+          $elements = this.$elemTargets;
+        }
+      } else if ( elements instanceof $ === true ) {
+        $elements = elements;
+      } else {
+        $elements = this.$elemBase.find( elements );
+      }
+      if ( $elements.length === 0 ) {
+        return this;
+      }
       cancelAnimationFrame( this.rafId );
       this.rafId = null;
       if ( this.settings.eventType ) {
@@ -226,47 +267,40 @@ import jQuery from 'jquery';
   };
   $.fn[ pluginName ] = function( arg1, arg2, arg3 ) {
     var
-      plugin
-      ,$elemTargets = this
+      plugin = this.data( pluginName ) || Object.create( $[ pluginName ] )
       ,children
       ,options
     ;
-    if ( !this.data( pluginName ) ) {
-      if ( $[ pluginName ][ arg1 ] ) {
-        if ( arg2 && arg3 ) {
-          children = arg2;
-          options = arg3;
-        } else if ( arg2 ) {
-          if ( _isOptions( arg2 ) ) {
-            options = arg2;
-          } else {
-            children = arg2;
-          }
-        }
-      } else {
-        if ( arg1 && arg2 ) {
-          children = arg1;
+    plugin.$elemBase = this;
+    if ( plugin[ arg1 ] ) {
+      if ( arg2 && arg3 ) {
+        children = arg2;
+        options = arg3;
+      } else if ( arg2 ) {
+        if ( _isOptions( arg2 ) ) {
           options = arg2;
-        } else if ( arg1 ) {
-          if ( _isOptions( arg1 ) ) {
-            options = arg1;
-          } else {
-            children = arg1;
-          }
+        } else {
+          children = arg2;
         }
-        this.data(
-          pluginName,
-          Object
-            .create( $[ pluginName ] )
-            .init( $elemTargets, children, options )
-        );
       }
-    }
-    plugin = this.data( pluginName );
-    if ( plugin && plugin[ arg1 ] ) {
       plugin[ arg1 ].call( plugin, children, options );
+      if ( arg1 !== 'destroy' ) {
+        this.data( pluginName, plugin );
+      }
+    } else {
+      if ( arg1 && arg2 ) {
+        children = arg1;
+        options = arg2;
+      } else if ( arg1 ) {
+        if ( _isOptions( arg1 ) ) {
+          options = arg1;
+        } else {
+          children = arg1;
+        }
+      }
+      this.data( pluginName, plugin.init( this, children, options ) );
     }
-    return this;
+    return plugin;
     function _isOptions( obj ) {
       return typeof obj === 'object' &&
         ( obj.nodeType === undefined || obj.nodeType !== Node.ELEMENT_NODE ) &&
