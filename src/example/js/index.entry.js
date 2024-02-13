@@ -25,6 +25,9 @@ import '../../js/jquery.resize_events.js';
       onComplete          : function() {
         this.$elemBase.addClass( 'js-complete' );
       },
+      onDestroy           : function() {
+        this.$elemBase.removeClass( 'js-complete' );
+      }
     }
   ;
   $( '#list1_r' )
@@ -60,7 +63,6 @@ import '../../js/jquery.resize_events.js';
   $( '#list3_d' )
     .on( 'click', function() {
       $list3.rowHeight( 'destroy' );
-      $list3.removeClass( 'js-complete' );
       return false;
     } )
   ;

@@ -39,6 +39,9 @@ __webpack_require__.r(__webpack_exports__);
       onComplete          : function() {
         this.$elemBase.addClass( 'js-complete' );
       },
+      onDestroy           : function() {
+        this.$elemBase.removeClass( 'js-complete' );
+      }
     }
   ;
   $( '#list1_r' )
@@ -74,7 +77,6 @@ __webpack_require__.r(__webpack_exports__);
   $( '#list3_d' )
     .on( 'click', function() {
       $list3.rowHeight( 'destroy' );
-      $list3.removeClass( 'js-complete' );
       return false;
     } )
   ;
@@ -224,10 +226,10 @@ __webpack_require__.r(__webpack_exports__);
     pluginName = 'rowHeight'
   ;
   $[ pluginName ] = {
-    $elemBase : $( document )
-    ,$elemTargets  : null
-    ,rafId : null
-    ,handle    : null
+    $elemBase          : $( document )
+    ,$elemTargets      : null
+    ,rafId             : null
+    ,handle            : null
     ,settings  : {
       firstOfRowClassName  : ''
       ,lastOfRowClassName  : ''
@@ -235,11 +237,11 @@ __webpack_require__.r(__webpack_exports__);
       ,settingHeightDelay  : 16
       ,onBefore            : null
       ,onComplete          : null
+      ,onDestroy           : null
       ,cssProp             : 'height'
       ,eventType           : ''
       ,eventObj            : window
       ,isTargetAll         : false
-      ,isBaseEqualTarget   : false
     }
     ,init : function( elements, children, options ) {
       var
@@ -288,16 +290,12 @@ __webpack_require__.r(__webpack_exports__);
         ,settings = $.extend( {}, this.settings, options )
         ,startTime = undefined
       ;
-      if ( !elements && this.$elemTargets && this.$elemTargets.length > 0 ) {
-        if ( this.isBaseEqualTarget === true ) {
-          $initialTargets = this.$elemBase;
-        } else {
-          $initialTargets = this.$elemTargets;
-        }
+      if ( !elements && !this.$elemTargets ) {
+        $initialTargets = this.$elemBase;
+      } else if ( !elements && this.$elemTargets && this.$elemTargets.length > 0 ) {
+        $initialTargets = this.$elemTargets;
       } else if ( elements instanceof $ === true ) {
         $initialTargets = elements;
-      } else if ( !this.$elemTargets ) {
-        $initialTargets = this.$elemBase;
       } else {
         $initialTargets = this.$elemBase.find( elements );
       }
@@ -444,12 +442,10 @@ __webpack_require__.r(__webpack_exports__);
     }
     ,destroy : function( elements ) {
       var $elements;
-      if ( !elements && this.$elemTargets && this.$elemTargets.length > 0 ) {
-        if ( this.isBaseEqualTarget === true ) {
-          $elements = this.$elemBase;
-        } else {
-          $elements = this.$elemTargets;
-        }
+      if ( !elements && !this.$elemTargets ) {
+        $elements = this.$elemBase;
+      } else if ( !elements && this.$elemTargets && this.$elemTargets.length > 0 ) {
+        $elements = this.$elemTargets;
       } else if ( elements instanceof $ === true ) {
         $elements = elements;
       } else {
@@ -468,11 +464,12 @@ __webpack_require__.r(__webpack_exports__);
         .removeClass( this.settings.firstOfRowClassName )
         .removeClass( this.settings.lastOfRowClassName )
       ;
-      if ( this.$elemBase && this.$elemBase.length > 0 ) {
-        return this
-          .$elemBase
-          .removeData( pluginName )
-        ;
+      this
+        .$elemBase
+        .removeData( pluginName )
+      ;
+      if ( typeof this.settings.onDestroy === 'function' ) {
+        this.settings.onDestroy.call( this );
       }
       return $elements;
     }
@@ -484,7 +481,7 @@ __webpack_require__.r(__webpack_exports__);
       ,options
     ;
     plugin.$elemBase = this;
-    if ( plugin[ arg1 ] ) {
+    if ( typeof plugin[ arg1 ] === 'function' ) {
       if ( arg2 && arg3 ) {
         children = arg2;
         options = arg3;
@@ -495,10 +492,8 @@ __webpack_require__.r(__webpack_exports__);
           children = arg2;
         }
       }
+      this.data( pluginName, plugin );
       plugin[ arg1 ].call( plugin, children, options );
-      if ( arg1 !== 'destroy' ) {
-        this.data( pluginName, plugin );
-      }
     } else {
       if ( arg1 && arg2 ) {
         children = arg1;
